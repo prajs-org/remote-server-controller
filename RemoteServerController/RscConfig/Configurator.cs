@@ -17,17 +17,72 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Configuration;
 
 namespace RscConfig
 {
-    public class Configurator
+    public class Configurator : ConfigurationSection
     {
-        public const double GeneralTimeout = 5000;
+        private static Configurator instance;
 
-        public const string UnknownStatusToken = "Unknown";
+        static Configurator()
+        {
+            instance = ConfigurationManager.GetSection("Configurator") as Configurator;
+        }
 
-        public const string True = "true";
+        public static Configurator Settings
+        {
+            get { return instance; }
+        }
 
-        public const string False = "false";
+        [ConfigurationProperty("GeneralSettings", IsRequired = true)]
+        public GeneralSettings GeneralSettings
+        {
+            set { this["GeneralSettings"] = value; }
+            get { return (GeneralSettings)this["GeneralSettings"]; }
+        }
+
+        [ConfigurationProperty("Services", IsRequired = false)]
+        public Services Services
+        {
+            set { this["Services"] = value; }
+            get { return (Services)this["Services"]; }
+        }
+    }
+
+    public class Services : ConfigurationElement
+    {
+        [ConfigurationProperty("StatusChangeTimeout", DefaultValue = "5000", IsRequired = true)]
+        [LongValidator(MinValue = 0, MaxValue = long.MaxValue)]
+        public long StatusChangeTimeout
+        {
+            set { this["StatusChangeTimeout"] = value; }
+            get { return (long)this["StatusChangeTimeout"]; }
+        }
+    }
+
+    public class GeneralSettings : ConfigurationElement
+    {
+        [ConfigurationProperty("DefaultTimeout", DefaultValue = "5000", IsRequired = true)]
+        [LongValidator(MinValue=0, MaxValue=long.MaxValue)]
+        public long DefaultTimeout
+        {
+            set { this["DefaultTimeout"] = value; }
+            get { return (long)this["DefaultTimeout"]; }
+        }
+
+        [ConfigurationProperty("TrueToken", DefaultValue = "true", IsRequired = true)]
+        public string TrueToken
+        {
+            set { this["TrueToken"] = value; }
+            get { return (string)this["TrueToken"]; }
+        }
+
+        [ConfigurationProperty("FalseToken", DefaultValue = "false", IsRequired = true)]
+        public string FalseToken
+        {
+            set { this["FalseToken"] = value; }
+            get { return (string)this["FalseToken"]; }
+        }
     }
 }

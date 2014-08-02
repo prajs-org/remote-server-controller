@@ -42,39 +42,56 @@ namespace RscCMDHost
             // Set log level
             Log.Level = Log.LogLevel.Info;
 
-            // Setup basic endpoint - unsafe, pure HTTP
-            WebServiceHost host = new WebServiceHost(typeof(RESTController));
-            WebHttpBinding binding = new WebHttpBinding(WebHttpSecurityMode.None);
-            binding.CrossDomainScriptAccessEnabled = true;
-            ServiceEndpoint endPoint = new ServiceEndpoint(ContractDescription.GetContract(typeof(RESTController)),
-                                                           binding,
-                                                           new EndpointAddress(new Uri("http://" + cHost + ":" + cPort + "/RESTController")));
-            host.AddServiceEndpoint(endPoint);
-            host.Open();
-
-            // Print some information for user
-            Console.WriteLine("Remote Service Controller");
-            Console.WriteLine("Copyright (C) 2014 Karel Prajs");
-            Console.WriteLine();
-            Console.WriteLine(new StringBuilder("This program is free software: you can redistribute it and/or modify")
-                .Append(Environment.NewLine)
-                .AppendLine("it under the terms of the GNU General Public License as published by")
-                .AppendLine("the Free Software Foundation, either version 3 of the License, or")
-                .AppendLine("(at your option) any later version."));
-            Console.WriteLine();
-            Console.WriteLine(String.Format("Listening on {0}:{1}", cHost, cPort));
-            Console.WriteLine(String.Format("Type <{0}> to stop listening and close program.", cQuitToken));
-
-            // Wait on exit command
-            while (true)
+            WebServiceHost host = null;
+            try
             {
-                string input = Console.ReadLine();
-                if (input == cQuitToken)
-                    break;
-            }
 
-            // Close endpoint
-            host.Close();
+                // Setup basic endpoint - unsafe, pure HTTP
+                host = new WebServiceHost(typeof(RESTController));
+                WebHttpBinding binding = new WebHttpBinding(WebHttpSecurityMode.None);
+                binding.CrossDomainScriptAccessEnabled = true;
+                ServiceEndpoint endPoint = new ServiceEndpoint(ContractDescription.GetContract(typeof(RESTController)),
+                                                               binding,
+                                                               new EndpointAddress(new Uri("http://" + cHost + ":" + cPort + "/RESTController")));
+                host.AddServiceEndpoint(endPoint);
+                host.Open();
+
+                // Print some information for user
+                Console.WriteLine("Remote Service Controller");
+                Console.WriteLine("Copyright (C) 2014 Karel Prajs");
+                Console.WriteLine();
+                Console.WriteLine(new StringBuilder("This program is free software: you can redistribute it and/or modify")
+                    .Append(Environment.NewLine)
+                    .AppendLine("it under the terms of the GNU General Public License as published by")
+                    .AppendLine("the Free Software Foundation, either version 3 of the License, or")
+                    .AppendLine("(at your option) any later version."));
+                Console.WriteLine();
+                Console.WriteLine(String.Format("Listening on {0}:{1}", cHost, cPort));
+                Console.WriteLine(String.Format("Type <{0}> to stop listening and close program.", cQuitToken));
+
+                // Wait on exit command
+                while (true)
+                {
+                    string input = Console.ReadLine();
+                    if (input == cQuitToken)
+                        break;
+                }
+            }
+            catch(Exception ex)
+            {
+                Log.Fatal("General error");
+                Log.Fatal(ex.Message);
+                if (ex.InnerException != null)
+                    Log.Fatal(ex.InnerException.Message);
+                Log.Fatal("Press ENTER to exit.");
+                Console.Read();
+            }
+            finally
+            {
+                // Close endpoint
+                if (host != null)
+                    host.Close();
+            }
         }
     }
 }

@@ -74,7 +74,7 @@ namespace RscCore.Controllers
         /// <returns></returns>
         public static ServiceActionResult ChangeServiceStatus(string serviceName, ServiceControllerStatus newStatus, params ServiceControllerStatus[] allowedCurrentStatuses)
         {
-            Log.Debug("Processing request: Service/Start/{0}", serviceName);
+            Log.Debug("Processing request: ChangeServiceStatus<{0}> to status<{1}>", serviceName, newStatus);
 
             var status = ServiceHelper.GetServiceStatusToken(serviceName);
             bool success = true;
@@ -84,7 +84,7 @@ namespace RscCore.Controllers
                 if (!allowedCurrentStatuses.Contains(status.Value))
                 {
                     success = false;
-                    Log.Error("ServiceStart<{0}> in status<{1}>. Cannot start.", serviceName, status.Value);
+                    Log.Error("ServiceStart<{0}> not in allowed status.", serviceName);
                 }
                 else
                 {
@@ -92,7 +92,7 @@ namespace RscCore.Controllers
                     {
                         try
                         {
-                            TimeSpan timeout = TimeSpan.FromMilliseconds(Configurator.GeneralTimeout);
+                            TimeSpan timeout = TimeSpan.FromMilliseconds(Configurator.Settings.Services.StatusChangeTimeout);// ?? Configurator.Settings.GeneralSettings.DefaultTimeout);
                             switch (newStatus)
                             {
                                 case ServiceControllerStatus.Running:
@@ -128,7 +128,7 @@ namespace RscCore.Controllers
             else
             {
                 success = false;
-                Log.Error("ServiceStart<{0}> has unknown status. Cannot start.", serviceName);
+                Log.Error("ServiceStart<{0}> has unknown status. Cannot change status.", serviceName);
             }
             return new ServiceActionResult(serviceName, status, success);
         }
