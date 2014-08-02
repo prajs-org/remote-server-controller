@@ -74,7 +74,7 @@ namespace RscCore.Controllers
         /// <returns></returns>
         public static ServiceActionResult ChangeServiceStatus(string serviceName, ServiceControllerStatus newStatus, params ServiceControllerStatus[] allowedCurrentStatuses)
         {
-            Log.Debug("Incoming request: Service/Start/{0}", serviceName);
+            Log.Debug("Processing request: Service/Start/{0}", serviceName);
 
             var status = ServiceHelper.GetServiceStatusToken(serviceName);
             bool success = true;
@@ -111,6 +111,11 @@ namespace RscCore.Controllers
                             }
                             service.WaitForStatus(newStatus, timeout);
                             status = ServiceHelper.GetServiceStatusToken(serviceName);
+                        }
+                        catch (System.ServiceProcess.TimeoutException)
+                        {
+                            success = false;
+                            Log.Error("ServiceStart<{0}> failed. TimeoutException.", serviceName);
                         }
                         catch (Exception ex)
                         {
