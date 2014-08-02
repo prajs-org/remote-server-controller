@@ -31,31 +31,31 @@ namespace RscLog
 
         public static void Debug(string message, params object[] args)
         {
-            if (Level >= LogLevel.Debug)
+            if (Level <= LogLevel.Debug)
                 Console.WriteLine("DEBUG: " + string.Format(message, args));
         }
 
         public static void Info(string message, params object[] args)
         {
-            if (Level >= LogLevel.Info)
+            if (Level <= LogLevel.Info)
                 Console.WriteLine("INFO: " + string.Format(message, args));
         }
 
         public static void Warning(string message, params object[] args)
         {
-            if (Level >= LogLevel.Warning)
+            if (Level <= LogLevel.Warning)
                 Console.WriteLine("WARNING: " + string.Format(message, args));
         }
 
         public static void Error(string message, params object[] args)
         {
-            if (Level >= LogLevel.Error)
+            if (Level <= LogLevel.Error)
                 Console.WriteLine("ERROR: " + string.Format(message, args));
         }
 
         public static void Fatal(string message, params object[] args)
         {
-            if (Level >= LogLevel.Fatal)
+            if (Level <= LogLevel.Fatal)
                 Console.WriteLine("FATAL: " + string.Format(message, args));
         }
     }
