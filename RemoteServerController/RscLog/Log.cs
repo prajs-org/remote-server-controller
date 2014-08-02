@@ -32,31 +32,49 @@ namespace RscLog
         public static void Debug(string message, params object[] args)
         {
             if (Level <= LogLevel.Debug)
-                Console.WriteLine("DEBUG: " + string.Format(message, args));
+                WriteLog(LogLevel.Debug, message, args);
         }
 
         public static void Info(string message, params object[] args)
         {
             if (Level <= LogLevel.Info)
-                Console.WriteLine("INFO: " + string.Format(message, args));
+                WriteLog(LogLevel.Info, message, args);
         }
 
         public static void Warning(string message, params object[] args)
         {
             if (Level <= LogLevel.Warning)
-                Console.WriteLine("WARNING: " + string.Format(message, args));
+                WriteLog(LogLevel.Warning, message, args);
         }
 
         public static void Error(string message, params object[] args)
         {
             if (Level <= LogLevel.Error)
-                Console.WriteLine("ERROR: " + string.Format(message, args));
+                WriteLog(LogLevel.Error, message, args);
         }
 
         public static void Fatal(string message, params object[] args)
         {
             if (Level <= LogLevel.Fatal)
-                Console.WriteLine("FATAL: " + string.Format(message, args));
+                WriteLog(LogLevel.Fatal, message, args);
+        }
+
+        private static void WriteLog(LogLevel level, string message, params object[] args)
+        {
+            try
+            {
+                Console.WriteLine(new StringBuilder(level.ToString()).Append(": ")
+                    .Append(String.Format(message, args)));
+            }
+            catch (Exception)
+            {
+                Console.Write(level.ToString() + ": (format exception) " + message + " - ARGUMENTS:");
+                foreach(var item in args)
+                {
+                    Console.Write(" <" + item + ">");
+                }
+                Console.WriteLine();
+            }
         }
     }
 }
