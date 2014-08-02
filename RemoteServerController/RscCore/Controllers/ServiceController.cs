@@ -29,24 +29,17 @@ namespace RscCore.Controllers
     {
         public static ServiceActionResult ServiceStart(string serviceName)
         {
+            Log.Debug("Incoming request: Service/Start/{0}", serviceName);
             return ServiceHelper.ChangeServiceStatus(serviceName, ServiceControllerStatus.Running, ServiceControllerStatus.Stopped);
         }
 
         public static ServiceActionResult ServiceStop(string serviceName)
         {
+            Log.Debug("Incoming request: Service/Stop/{0}", serviceName);
             return ServiceHelper.ChangeServiceStatus(serviceName, ServiceControllerStatus.Stopped, ServiceControllerStatus.Running);
         }
 
-        public static ServiceActionResult ServiceRestart(string serviceName)
-        {
-            throw new NotImplementedException();
-        }
-        /// <summary>
-        /// Return status of service. Status has value 'Unknown' in case of error.
-        /// </summary>
-        /// <param name="serviceName">Name of service</param>
-        /// <returns>Current service status</returns>
-        public static ServiceStatus GetServiceStatus(string serviceName)
+        public static ServiceStatus ServiceStatus(string serviceName)
         {
             Log.Debug("Incoming request: Service/Status/{0}", serviceName);
             return new ServiceStatus(serviceName, ServiceHelper.GetServiceStatusToken(serviceName));

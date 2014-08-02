@@ -31,7 +31,7 @@ namespace RscCore
     {
         public ServiceStatus ServiceStatusJSON(string serviceName)
         {
-            return Controllers.Service.GetServiceStatus(serviceName);
+            return Controllers.Service.ServiceStatus(serviceName);
         }
 
         public ServiceActionResult ServiceStartJSON(string serviceName)
