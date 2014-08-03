@@ -59,6 +59,57 @@ namespace RscConfig
             set { this["StatusChangeTimeout"] = value; }
             get { return (long)this["StatusChangeTimeout"]; }
         }
+
+        [ConfigurationProperty("AllowedServiceCollection", IsRequired = true)]
+        public AllowedServiceCollection AllowedServices
+        {
+            get { return (AllowedServiceCollection)this["AllowedServiceCollection"]; }
+            set { this["AllowedServiceCollection"] = value; }
+        }
+    }
+
+    public class AllowedServiceCollection : ConfigurationElementCollection
+    {
+        protected override ConfigurationElement CreateNewElement()
+        {
+            return new AddService();
+        }
+
+        protected override object GetElementKey(ConfigurationElement service)
+        {
+            return ((AddService)service).Name;
+        }
+    }
+
+    public class AddService : ConfigurationElement
+    {
+        [ConfigurationProperty("Name", IsKey=true, IsRequired=true)]
+        public string Name 
+        {
+            get { return (string) base["Name"]; }
+            set { base["Name"] = value; }
+        }
+
+        [ConfigurationProperty("AllowStart", IsKey = true, IsRequired = true)]
+        public bool AllowStart
+        {
+            get { return (bool)base["AllowStart"]; }
+            set { base["AllowStop"] = value; }
+        }
+
+        [ConfigurationProperty("AllowStop", IsKey = true, IsRequired = true)]
+        public bool AllowStop
+        {
+            get { return (bool)base["AllowStop"]; }
+            set { base["AllowStop"] = value; }
+        }
+
+        [ConfigurationProperty("AllowStatusCheck", IsKey = true, IsRequired = true)]
+        public bool AllowStatusCheck
+        {
+            get { return (bool)base["AllowStatusCheck"]; }
+            set { base["AllowStop"] = value; }
+        }
     }
 
     public class GeneralSettings : ConfigurationElement
@@ -69,20 +120,6 @@ namespace RscConfig
         {
             set { this["DefaultTimeout"] = value; }
             get { return (long)this["DefaultTimeout"]; }
-        }
-
-        [ConfigurationProperty("TrueToken", DefaultValue = "true", IsRequired = true)]
-        public string TrueToken
-        {
-            set { this["TrueToken"] = value; }
-            get { return (string)this["TrueToken"]; }
-        }
-
-        [ConfigurationProperty("FalseToken", DefaultValue = "false", IsRequired = true)]
-        public string FalseToken
-        {
-            set { this["FalseToken"] = value; }
-            get { return (string)this["FalseToken"]; }
         }
     }
 }

@@ -24,6 +24,8 @@ using System.Text;
 
 using RscLog;
 using RscInterface;
+using RscCore.Controllers;
+using RscConfig;
 
 namespace RscCore
 {
