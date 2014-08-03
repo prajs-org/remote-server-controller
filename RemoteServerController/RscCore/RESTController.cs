@@ -33,17 +33,17 @@ namespace RscCore
     {
         public ServiceStatus ServiceStatusJSON(string serviceName)
         {
-            return Controllers.Service.ServiceStatus(serviceName);
+            return ControlFactory.GetService(serviceName).GetStatus();
         }
 
         public ServiceActionResult ServiceStartJSON(string serviceName)
         {
-            return Controllers.Service.ServiceStart(serviceName);
+            return ControlFactory.GetService(serviceName).Start();
         }
 
         public ServiceActionResult ServiceStopJSON(string serviceName)
         {
-            return Controllers.Service.ServiceStop(serviceName);
+            return ControlFactory.GetService(serviceName).Stop();
         }
     }
 }

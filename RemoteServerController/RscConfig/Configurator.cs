@@ -79,6 +79,21 @@ namespace RscConfig
         {
             return ((AddService)service).Name;
         }
+
+        public bool GetService(string serviceName, out AddService outService)
+        {
+            foreach (var item in Configurator.Settings.Services.AllowedServices)
+            {
+                AddService service = (AddService)item;
+                if (serviceName == service.Name)
+                {
+                    outService = service;
+                    return true;
+                }
+            }
+            outService = null;
+            return false;
+        }
     }
 
     public class AddService : ConfigurationElement
