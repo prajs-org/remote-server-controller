@@ -48,7 +48,7 @@ namespace RscCore.Controllers
             }
 
             return status;
-        }
+        }        
         /// <summary>
         /// Check if status is pending status. That means service is changing its status right now.
         /// </summary>
@@ -77,13 +77,13 @@ namespace RscCore.Controllers
             Log.Debug("Processing request: ChangeServiceStatus<{0}> to status<{1}>", serviceName, newStatus);
 
             var status = ServiceHelper.GetServiceStatusToken(serviceName);
-            bool success = true;
+            Constants.ErrorCode error_code = Constants.ErrorCode.OK;
 
             if (status.HasValue)
             {
                 if (!allowedCurrentStatuses.Contains(status.Value))
                 {
-                    success = false;
+                    error_code = Constants.ErrorCode.UnmetRequirements;
                     Log.Error("ServiceStart<{0}> not in allowed status.", serviceName);
                 }
                 else
@@ -106,7 +106,7 @@ namespace RscCore.Controllers
                                     break;
                                 default:
                                     Log.Error("Unsupported action<{0}>.", newStatus);
-                                    success = false;
+                                    error_code = Constants.ErrorCode.NotSupported;
                                     break;
                             }
                             service.WaitForStatus(newStatus, timeout);
@@ -114,23 +114,23 @@ namespace RscCore.Controllers
                         }
                         catch (System.ServiceProcess.TimeoutException)
                         {
-                            success = false;
-                            Log.Error("ServiceStart<{0}> failed. TimeoutException.", serviceName);
+                            error_code = Constants.ErrorCode.Timeout;
+                            Log.Error("Service<{0}> status change failed. TimeoutException.", serviceName);
                         }
                         catch (Exception ex)
                         {
-                            success = false;
-                            Log.Error("ServiceStart<{0}> failed. Exception: {1}", serviceName, ex.InnerException == null ? ex.Message : ex.InnerException.Message);
+                            error_code = Constants.ErrorCode.UnknownError;
+                            Log.Error("Service<{0}> status change failed. Exception: {1}", serviceName, ex.InnerException == null ? ex.Message : ex.InnerException.Message);
                         }
                     }
                 }
             }
             else
             {
-                success = false;
-                Log.Error("ServiceStart<{0}> has unknown status. Cannot change status.", serviceName);
+                error_code = Constants.ErrorCode.UnmetRequirements;
+                Log.Error("Service<{0}> has unknown status. Cannot change status.", serviceName);
             }
-            return new ServiceActionResult(serviceName, status, success);
+            return new ServiceActionResult(serviceName, status, error_code);
         }
     }
 }

@@ -30,19 +30,60 @@ namespace RscCore.Controllers
         public static ServiceActionResult ServiceStart(string serviceName)
         {
             Log.Debug("Incoming request: Service/Start/{0}", serviceName);
-            return ServiceHelper.ChangeServiceStatus(serviceName, ServiceControllerStatus.Running, ServiceControllerStatus.Stopped);
+            if (ServiceSecurity.IsActionAllowed(serviceName, Constants.ServiceActions.Start))
+            {
+                // If action is allowed, StatusCheck has to be considered as allowed as well.
+                return ServiceHelper.ChangeServiceStatus(serviceName, ServiceControllerStatus.Running, ServiceControllerStatus.Stopped);
+            }
+            else
+            {
+                Log.Info("Incoming request: Service/Start/{0} not allowed", serviceName);
+                if (ServiceSecurity.IsActionAllowed(serviceName, Constants.ServiceActions.StatusCheck))
+                {
+                    return new ServiceActionResult(serviceName, ServiceHelper.GetServiceStatusToken(serviceName), Constants.ErrorCode.NotAllowed);
+                }
+                else
+                {
+                    return new ServiceActionResult(serviceName, null, Constants.ErrorCode.NotAllowed);
+                }
+            }
         }
 
         public static ServiceActionResult ServiceStop(string serviceName)
         {
-            Log.Debug("Incoming request: Service/Stop/{0}", serviceName);
-            return ServiceHelper.ChangeServiceStatus(serviceName, ServiceControllerStatus.Stopped, ServiceControllerStatus.Running);
+            Log.Debug("Incoming request: Service/Start/{0}", serviceName);
+            if (ServiceSecurity.IsActionAllowed(serviceName, Constants.ServiceActions.Start))
+            {
+                // If action is allowed, StatusCheck has to be considered as allowed as well.
+                return ServiceHelper.ChangeServiceStatus(serviceName, ServiceControllerStatus.Stopped, ServiceControllerStatus.Running);
+            }
+            else
+            {
+                Log.Info("Incoming request: Service/Start/{0} not allowed", serviceName);
+                if (ServiceSecurity.IsActionAllowed(serviceName, Constants.ServiceActions.StatusCheck))
+                {
+                    return new ServiceActionResult(serviceName, ServiceHelper.GetServiceStatusToken(serviceName), Constants.ErrorCode.NotAllowed);
+                }
+                else
+                {
+                    return new ServiceActionResult(serviceName, null, Constants.ErrorCode.NotAllowed);
+                }
+            }            
         }
 
         public static ServiceStatus ServiceStatus(string serviceName)
         {
             Log.Debug("Incoming request: Service/Status/{0}", serviceName);
-            return new ServiceStatus(serviceName, ServiceHelper.GetServiceStatusToken(serviceName));
+            if (ServiceSecurity.IsActionAllowed(serviceName, Constants.ServiceActions.StatusCheck))
+            {
+                var status = ServiceHelper.GetServiceStatusToken(serviceName);
+                return new ServiceStatus(serviceName, status, status == null ? Constants.ErrorCode.UnknownError : Constants.ErrorCode.OK);
+            }
+            else
+            {
+                Log.Info("Incoming request: Service/Status/{0} not allowed", serviceName);
+                return new ServiceStatus(serviceName, null, Constants.ErrorCode.NotAllowed);
+            }
         }
     }
 }
