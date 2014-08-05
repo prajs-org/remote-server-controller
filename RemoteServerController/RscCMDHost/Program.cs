@@ -22,9 +22,9 @@ using System.Text;
 using RscLog;
 using System.Diagnostics;
 
-namespace RscCMDHost
+namespace RscHost
 {
-    class RscCMD
+    class RscHost
     {
         // TODO: temporary, make it better
         static void Main(string[] args)
