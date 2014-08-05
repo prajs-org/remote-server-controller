@@ -40,6 +40,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Web">
@@ -52,6 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helpers.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -59,6 +61,10 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\RscConfig\RscConfig.csproj">
+      <Project>{4CA510AF-EF9B-4696-A777-584BC831F0B5}</Project>
+      <Name>RscConfig</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RscCore\RscCore.csproj">
       <Project>{E886BBD5-3255-439D-8B37-25035217FFB4}</Project>
       <Name>RscCore</Name>

@@ -42,6 +42,13 @@ namespace RscConfig
             get { return (GeneralSettings)this["GeneralSettings"]; }
         }
 
+        [ConfigurationProperty("Network", IsRequired = true)]
+        public Network Network
+        {
+            set { this["Network"] = value; }
+            get { return (Network)this["Network"]; }
+        }
+
         [ConfigurationProperty("Services", IsRequired = false)]
         public Services Services
         {
@@ -127,14 +134,53 @@ namespace RscConfig
         }
     }
 
+    public class Network : ConfigurationElement 
+    {
+        [ConfigurationProperty("Host", DefaultValue = "localhost", IsRequired = true)]
+        public string Host
+        {
+            set { this["Host"] = value; }
+            get { return (string)this["Host"]; }
+        }
+
+        [ConfigurationProperty("Port", DefaultValue = "55011", IsRequired = true)]
+        [LongValidator(MinValue=0, MaxValue=long.MaxValue)]
+        public long Port
+        {
+            set { this["Port"] = value; }
+            get { return (long)this["Port"]; }
+        }
+
+        [ConfigurationProperty("UseSSL", DefaultValue = false, IsRequired = true)]
+        public bool UseSSL
+        {
+            set { this["UseSSL"] = value; }
+            get { return (bool)this["UseSSL"]; }
+        }
+
+        [ConfigurationProperty("CrossDomainScriptAccessEnabled", DefaultValue = false, IsRequired = true)]
+        public bool CrossDomainScriptAccessEnabled
+        {
+            set { this["CrossDomainScriptAccessEnabled"] = value; }
+            get { return (bool)this["CrossDomainScriptAccessEnabled"]; }
+        }
+    }
+
     public class GeneralSettings : ConfigurationElement
     {
-        [ConfigurationProperty("DefaultTimeout", DefaultValue = "5000", IsRequired = true)]
-        [LongValidator(MinValue=0, MaxValue=long.MaxValue)]
-        public long DefaultTimeout
+        [ConfigurationProperty("QuitToken", DefaultValue = "quit!", IsRequired = true)]
+        [StringValidator(MinLength=1)]
+        public string QuitToken
         {
-            set { this["DefaultTimeout"] = value; }
-            get { return (long)this["DefaultTimeout"]; }
+            set { this["QuitToken"] = value; }
+            get { return (string)this["QuitToken"]; }
+        }
+
+        [ConfigurationProperty("LogLevel", DefaultValue = "Info", IsRequired = true)]
+        public string LogLevel
+        {
+            set { this["LogLevel"] = value; }
+            get { return (string)this["LogLevel"]; }
         }
     }
 }

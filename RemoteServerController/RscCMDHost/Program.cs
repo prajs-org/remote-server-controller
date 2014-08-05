@@ -17,10 +17,12 @@ using System;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.ServiceModel.Web;
-using RscCore;
-using System.Text;
-using RscLog;
 using System.Diagnostics;
+using System.Text;
+
+using RscCore;
+using RscLog;
+using RscConfig;
 
 namespace RscHost
 {
@@ -29,55 +31,40 @@ namespace RscHost
         // TODO: temporary, make it better
         static void Main(string[] args)
         {
-            // Some basic configuration
-            // TODO: make it real
-            string cHost = "localhost";
-            string cPort = "55001";
-            string cQuitToken = "quit!";
-            string cConsoleTitle = "Remote Service Controller";
-
             // Set window title
-            Console.Title = cConsoleTitle;
-
-            // Set log level
-            Log.Level = Log.LogLevel.Info;
+            Console.Title = "Remote Service Controller";
 
             WebServiceHost host = null;
+
             try
             {
+                // Set log level
+                Helpers.SetLogLevel();
 
-                // Setup basic endpoint - unsafe, pure HTTP
-                host = new WebServiceHost(typeof(RESTController));
-                WebHttpBinding binding = new WebHttpBinding(WebHttpSecurityMode.None);
-                binding.CrossDomainScriptAccessEnabled = true;
-                ServiceEndpoint endPoint = new ServiceEndpoint(ContractDescription.GetContract(typeof(RESTController)),
-                                                               binding,
-                                                               new EndpointAddress(new Uri("http://" + cHost + ":" + cPort + "/RESTController")));
-                host.AddServiceEndpoint(endPoint);
+                // Create and open host
+                if (Configurator.Settings.Network.UseSSL)
+                {
+                    Log.Fatal("SSL is not implemented yet. Exit.");
+                    return;
+                }
+                else
+                {
+                    Helpers.CreateHTTPHost(out host);
+                }
                 host.Open();
 
-                // Print some information for user
-                Console.WriteLine("Remote Service Controller");
-                Console.WriteLine("Copyright (C) 2014 Karel Prajs");
-                Console.WriteLine();
-                Console.WriteLine(new StringBuilder("This program is free software: you can redistribute it and/or modify")
-                    .Append(Environment.NewLine)
-                    .AppendLine("it under the terms of the GNU General Public License as published by")
-                    .AppendLine("the Free Software Foundation, either version 3 of the License, or")
-                    .AppendLine("(at your option) any later version."));
-                Console.WriteLine();
-                Console.WriteLine(String.Format("Listening on {0}:{1}", cHost, cPort));
-                Console.WriteLine(String.Format("Type <{0}> to stop listening and close program.", cQuitToken));
+                // Print welcome message
+                Helpers.WelcomeMessage();
 
                 // Wait on exit command
                 while (true)
                 {
                     string input = Console.ReadLine();
-                    if (input == cQuitToken)
+                    if (input == Configurator.Settings.GeneralSettings.QuitToken)
                         break;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log.Fatal("General error");
                 Log.Fatal(ex.Message);
@@ -89,8 +76,12 @@ namespace RscHost
             finally
             {
                 // Close endpoint
-                if (host != null)
-                    host.Close();
+                try
+                {
+                    if (host != null)
+                        host.Close();
+                }
+                catch { }
             }
         }
     }
