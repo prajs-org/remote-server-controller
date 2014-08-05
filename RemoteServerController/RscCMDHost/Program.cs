@@ -30,8 +30,11 @@ namespace RscHost
     {
         static void Main(string[] args)
         {
+            // Visible name of program
+            const string programName = "Remote Server Controller";
+
             // Set window title
-            Console.Title = "Remote Server Controller";
+            Console.Title = programName;
 
             WebServiceHost host = null;
 
@@ -53,7 +56,7 @@ namespace RscHost
                 host.Open();
 
                 // Print welcome message
-                Helpers.WelcomeMessage();
+                Helpers.WelcomeMessage(programName);
 
                 // Wait on exit command
                 while (true)
