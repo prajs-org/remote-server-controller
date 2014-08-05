@@ -5,7 +5,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RscCore", "RscCore\RscCore.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RscLog", "RscLog\RscLog.csproj", "{70567E04-5625-49F2-BD18-9170C3BF9460}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RscCMDHost", "RscCMDHost\RscCMDHost.csproj", "{0BDA480C-6EE3-45D6-928C-F72A5A44E8CD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RscHost", "RscCMDHost\RscHost.csproj", "{0BDA480C-6EE3-45D6-928C-F72A5A44E8CD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RscInterface", "RscInterface\RscInterface.csproj", "{92FC0032-5A4B-451A-AD89-881FA76B07D6}"
 EndProject
@@ -17,18 +17,18 @@ Global
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs13
 		SccLocalPath0 = .
-		SccProjectUniqueName1 = RscCMDHost\\RscCMDHost.csproj
-		SccProjectName1 = RSCCMDHost
-		SccLocalPath1 = RSCCMDHost
-		SccProjectUniqueName2 = RscLog\\RscLog.csproj
-		SccProjectName2 = RSCLog
-		SccLocalPath2 = RSCLog
-		SccProjectUniqueName3 = RscCore\\RscCore.csproj
-		SccProjectName3 = RscCore
-		SccLocalPath3 = RscCore
-		SccProjectUniqueName4 = RscConfig\\RscConfig.csproj
-		SccProjectName4 = RscConfig
-		SccLocalPath4 = RscConfig
+		SccProjectUniqueName1 = RscLog\\RscLog.csproj
+		SccProjectName1 = RSCLog
+		SccLocalPath1 = RSCLog
+		SccProjectUniqueName2 = RscCore\\RscCore.csproj
+		SccProjectName2 = RscCore
+		SccLocalPath2 = RscCore
+		SccProjectUniqueName3 = RscConfig\\RscConfig.csproj
+		SccProjectName3 = RscConfig
+		SccLocalPath3 = RscConfig
+		SccProjectUniqueName4 = RscCMDHost\\RscHost.csproj
+		SccProjectName4 = RSCCMDHost
+		SccLocalPath4 = RSCCMDHost
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
