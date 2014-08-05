@@ -18,7 +18,7 @@ namespace RscHost
         {
             var copyYear = DateTime.Now.Year == 2014 ? "2014" : "2014-" + DateTime.Now.Year;
             // Print some information for user
-            Console.WriteLine("Remote Service Controller");
+            Console.WriteLine("Remote Server Controller");
             Console.WriteLine("Copyright (C) " + copyYear + " Karel Prajs");
             Console.WriteLine("http://rsc.codeplex.com");
             Console.WriteLine();

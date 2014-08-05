@@ -28,11 +28,10 @@ namespace RscHost
 {
     class RscHost
     {
-        // TODO: temporary, make it better
         static void Main(string[] args)
         {
             // Set window title
-            Console.Title = "Remote Service Controller";
+            Console.Title = "Remote Server Controller";
 
             WebServiceHost host = null;
 
