@@ -14,11 +14,11 @@ namespace RscHost
 {
     internal static class Helpers
     {
-        internal static void WelcomeMessage()
+        internal static void WelcomeMessage(string programName)
         {
             var copyYear = DateTime.Now.Year == 2014 ? "2014" : "2014-" + DateTime.Now.Year;
             // Print some information for user
-            Console.WriteLine("Remote Server Controller");
+            Console.WriteLine(programName);
             Console.WriteLine("Copyright (C) " + copyYear + " Karel Prajs");
             Console.WriteLine("http://rsc.codeplex.com");
             Console.WriteLine();
