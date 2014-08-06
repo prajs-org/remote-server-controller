@@ -46,8 +46,7 @@ namespace RscHost
                 // Create and open host
                 if (Configurator.Settings.Network.UseSSL)
                 {
-                    Log.Fatal("SSL is not implemented yet. Exit.");
-                    return;
+                    throw new NotImplementedException("SSL is not implemented yet.");
                 }
                 else
                 {
