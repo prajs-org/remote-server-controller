@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 
 namespace RscLog
 {
@@ -25,46 +26,44 @@ namespace RscLog
     /// </summary>
     public static class Log
     {
+        static EventLog eventLog = new EventLog();
+
         public enum LogLevel { Silent, Debug, Info, Warning, Error, Fatal }
 
-        public static LogLevel Level { set; get; }
+        public static LogLevel Level
+        { 
+            set;
+            get;
+        }
 
-        public static void Debug(string message, params object[] args)
+        public static void Init(string appName)
         {
-            if (Level <= LogLevel.Debug)
-                WriteLog(LogLevel.Debug, message, args);
+            eventLog.Source = appName;
         }
 
         public static void Info(string message, params object[] args)
         {
             if (Level <= LogLevel.Info)
-                WriteLog(LogLevel.Info, message, args);
+                WriteLog(EventLogEntryType.Information, message, args);
         }
 
         public static void Warning(string message, params object[] args)
         {
             if (Level <= LogLevel.Warning)
-                WriteLog(LogLevel.Warning, message, args);
+                WriteLog(EventLogEntryType.Warning, message, args);
         }
 
         public static void Error(string message, params object[] args)
         {
             if (Level <= LogLevel.Error)
-                WriteLog(LogLevel.Error, message, args);
+                WriteLog(EventLogEntryType.Error, message, args);
         }
 
-        public static void Fatal(string message, params object[] args)
-        {
-            if (Level <= LogLevel.Fatal)
-                WriteLog(LogLevel.Fatal, message, args);
-        }
-
-        private static void WriteLog(LogLevel level, string message, params object[] args)
+        private static void WriteLog(EventLogEntryType level, string message, params object[] args)
         {
             try
             {
-                Console.WriteLine(new StringBuilder(level.ToString()).Append(": ")
-                    .Append(String.Format(message, args)));
+                eventLog.WriteEntry(message, level);
             }
             catch (Exception)
             {

@@ -40,9 +40,6 @@ namespace RscHost
                 case "Silent":
                     Log.Level = Log.LogLevel.Silent;
                     break;
-                case "Debug":
-                    Log.Level = Log.LogLevel.Debug;
-                    break;
                 case "Info":
                     Log.Level = Log.LogLevel.Info;
                     break;
@@ -52,12 +49,9 @@ namespace RscHost
                 case "Error":
                     Log.Level = Log.LogLevel.Error;
                     break;
-                case "Fatal":
-                    Log.Level = Log.LogLevel.Fatal;
-                    break;
                 default:
-                    Log.Level = Log.LogLevel.Debug;
-                    Log.Debug("Unknown LogLevel<" + Configurator.Settings.GeneralSettings.LogLevel + ">, using Debug.");
+                    Log.Level = Log.LogLevel.Info;
+                    Log.Error("Unknown LogLevel<" + Configurator.Settings.GeneralSettings.LogLevel + ">, using Debug.");
                     break;
             };
         }
