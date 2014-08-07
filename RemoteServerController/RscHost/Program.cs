@@ -32,17 +32,21 @@ namespace RscHost
     class RscHost : ServiceBase
     {
         // Visible name of program
-        public const string ProgramName = "Remote Server Controller";
+        public const string cDisplayName = "Remote Server Controller";
+        public const string cServiceName = "RscHost";
 
         // Service
         WebServiceHost host = null;
 
-        static void Main() { }
+        static void Main()
+        {
+            ServiceBase.Run(new RscHost());
+        }
 
         protected override void OnStart(string[] args)
         {
             // Init logger
-            Log.Init(ProgramName);
+            Log.Init(cDisplayName);
             // Set log level
             Helpers.SetLogLevel();
 
@@ -94,7 +98,8 @@ namespace RscHost
             process = new ServiceProcessInstaller();
             process.Account = ServiceAccount.LocalSystem;
             service = new ServiceInstaller();
-            service.ServiceName = RscHost.ProgramName;
+            service.ServiceName = RscHost.cServiceName;
+            service.DisplayName = RscHost.cDisplayName;
             Installers.Add(process);
             Installers.Add(service);
         }
