@@ -33,10 +33,14 @@ namespace RscInterface
         [DataMember]
         public string Name { get; set; }
 
-        public ServiceStatus(string name, ServiceControllerStatus? status)
+        [DataMember]
+        public string Result { get; set; }
+
+        public ServiceStatus(string name, ServiceControllerStatus? status, Constants.ErrorCode result)
         {
             this.Name = name;
-            this.Status = status.HasValue ? status.ToString() : Configurator.UnknownStatusToken;
+            this.Status = status.HasValue ? status.ToString() : Constants.UknownToken;
+            this.Result = result.ToString();
         }
     }
 
@@ -50,13 +54,13 @@ namespace RscInterface
         public string Name { get; set; }
 
         [DataMember]
-        public string Success { get; set; }
+        public string Result { get; set; }
 
-        public ServiceActionResult(string name, ServiceControllerStatus? status, bool success)
+        public ServiceActionResult(string name, ServiceControllerStatus? status, Constants.ErrorCode result)
         {
             this.Name = name;
-            this.Status = status.HasValue ? status.ToString() : Configurator.UnknownStatusToken;
-            this.Success = success ? Configurator.True : Configurator.False;
+            this.Status = status.HasValue ? status.ToString() : Constants.UknownToken;
+            this.Result = result.ToString();
         }
     }
 }
