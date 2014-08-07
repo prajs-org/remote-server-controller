@@ -17,32 +17,43 @@ using System;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.ServiceModel.Web;
+using System.ServiceProcess;
 using System.Diagnostics;
 using System.Text;
 
 using RscCore;
 using RscLog;
 using RscConfig;
+using System.ComponentModel;
+using System.Configuration.Install;
 
 namespace RscHost
 {
-    class RscHost
+    class RscHost : ServiceBase
     {
-        static void Main(string[] args)
+        // Visible name of program
+        public const string ProgramName = "Remote Server Controller";
+
+        // Service
+        WebServiceHost host = null;
+
+        static void Main() { }
+
+        protected override void OnStart(string[] args)
         {
-            // Visible name of program
-            const string programName = "Remote Server Controller";
-
-            // Set window title
-            Console.Title = programName;
-
-            WebServiceHost host = null;
+            // Init logger
+            Log.Init(ProgramName);
+            // Set log level
+            Helpers.SetLogLevel();
 
             try
             {
-                // Set log level
-                Helpers.SetLogLevel();
-
+                // Close the service if already running
+                if (host != null)
+                {
+                    host.Close();
+                    host = null;
+                }
                 // Create and open host
                 if (Configurator.Settings.Network.UseSSL)
                 {
@@ -53,37 +64,39 @@ namespace RscHost
                     Helpers.CreateHTTPHost(out host);
                 }
                 host.Open();
-
-                // Print welcome message
-                Helpers.WelcomeMessage(programName);
-
-                // Wait on exit command
-                while (true)
-                {
-                    string input = Console.ReadLine();
-                    if (input == Configurator.Settings.GeneralSettings.QuitToken)
-                        break;
-                }
             }
             catch (Exception ex)
             {
-                Log.Fatal("General error");
-                Log.Fatal(ex.Message);
+                Log.Error("General error: " + ex.Message);
                 if (ex.InnerException != null)
-                    Log.Fatal(ex.InnerException.Message);
-                Log.Fatal("Press ENTER to exit.");
-                Console.Read();
+                    Log.Error("General error: " + ex.InnerException.Message);
             }
-            finally
+        }
+
+        protected override void OnStop()
+        {
+            if (host != null)
             {
-                // Close endpoint
-                try
-                {
-                    if (host != null)
-                        host.Close();
-                }
-                catch { }
+                host.Close();
+                host = null;
             }
+        }
+    }
+
+    [RunInstaller(true)]
+    public class ProjectInstaller : Installer
+    {
+        private ServiceProcessInstaller process;
+        private ServiceInstaller service;
+
+        public ProjectInstaller()
+        {
+            process = new ServiceProcessInstaller();
+            process.Account = ServiceAccount.LocalSystem;
+            service = new ServiceInstaller();
+            service.ServiceName = RscHost.ProgramName;
+            Installers.Add(process);
+            Installers.Add(service);
         }
     }
 }

@@ -106,7 +106,7 @@ namespace RscCore.Controllers
         /// <returns>Action result</returns>
         public ServiceActionResult Start()
         {
-            Log.Debug("Incoming request: Service/Start/{0}", this.Name);
+            Log.Info("Incoming request: Service/Start/{0}", this.Name);
             if (this.AllowStart)
             {
                 // If action is allowed, StatusCheck has to be considered as allowed as well.
@@ -114,7 +114,7 @@ namespace RscCore.Controllers
             }
             else
             {
-                Log.Info("Service/Start/{0} not allowed", this.Name);
+                Log.Warning("Request Service/Start/{0} not allowed", this.Name);
                 if (this.AllowStatusCheck)
                 {
                     return new ServiceActionResult(this.Name, this.GetStatusToken(), Constants.ErrorCode.NotAllowed);
@@ -131,7 +131,7 @@ namespace RscCore.Controllers
         /// <returns>Action result</returns>
         public ServiceActionResult Stop()
         {
-            Log.Debug("Incoming request: Service/Stop/{0}", this.Name);
+            Log.Info("Incoming request: Service/Stop/{0}", this.Name);
             if (this.AllowStop)
             {
                 // If action is allowed, StatusCheck has to be considered as allowed as well.
@@ -139,7 +139,7 @@ namespace RscCore.Controllers
             }
             else
             {
-                Log.Info("Service/Stop/{0} not allowed", this.Name);
+                Log.Warning("Request Service/Stop/{0} not allowed", this.Name);
                 if (this.AllowStatusCheck)
                 {
                     return new ServiceActionResult(this.Name, this.GetStatusToken(), Constants.ErrorCode.NotAllowed);
@@ -156,7 +156,7 @@ namespace RscCore.Controllers
         /// <returns></returns>
         public ServiceStatus GetStatus()
         {
-            Log.Debug("Incoming request: Service/Status/{0}", this.Name);
+            Log.Info("Incoming request: Service/Status/{0}", this.Name);
             if (this.AllowStatusCheck)
             {
                 var status = GetStatusToken();
@@ -164,7 +164,7 @@ namespace RscCore.Controllers
             }
             else
             {
-                Log.Info("Service/Status/{0} not allowed", this.Name);
+                Log.Warning("Request Service/Status/{0} not allowed", this.Name);
                 return new ServiceStatus(this.Name, null, Constants.ErrorCode.NotAllowed);
             }
         }
@@ -207,8 +207,6 @@ namespace RscCore.Controllers
         /// <returns>ActionResult</returns>
         private ServiceActionResult ChangeServiceStatus(ServiceControllerStatus newStatus, params ServiceControllerStatus[] allowedCurrentStatuses)
         {
-            Log.Debug("ChangeServiceStatus<{0}> to status<{1}>", this.Name, newStatus);
-
             var status = GetStatusToken();
             Constants.ErrorCode error_code = Constants.ErrorCode.OK;
 
@@ -217,7 +215,7 @@ namespace RscCore.Controllers
                 if (!allowedCurrentStatuses.Contains(status.Value))
                 {
                     error_code = Constants.ErrorCode.UnmetRequirements;
-                    Log.Error("ServiceStart<{0}> not in allowed status.", this.Name);
+                    Log.Info("ServiceStart<{0}> not in allowed status.", this.Name);
                 }
                 else
                 {
@@ -248,7 +246,7 @@ namespace RscCore.Controllers
                         catch (System.ServiceProcess.TimeoutException)
                         {
                             error_code = Constants.ErrorCode.Timeout;
-                            Log.Error("Service<{0}> status change failed. TimeoutException.", this.Name);
+                            Log.Warning("Service<{0}> status change failed. TimeoutException.", this.Name);
                         }
                         catch (Exception ex)
                         {
