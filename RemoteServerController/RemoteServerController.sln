@@ -18,8 +18,8 @@ Global
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs13
 		SccLocalPath0 = .
 		SccProjectUniqueName1 = RscLog\\RscLog.csproj
-		SccProjectName1 = RSCLog
-		SccLocalPath1 = RSCLog
+		SccProjectName1 = RscLog
+		SccLocalPath1 = RscLog
 		SccProjectUniqueName2 = RscCore\\RscCore.csproj
 		SccProjectName2 = RscCore
 		SccLocalPath2 = RscCore
