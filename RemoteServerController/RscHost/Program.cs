@@ -38,9 +38,28 @@ namespace RscHost
         // Service
         WebServiceHost host = null;
 
-        static void Main()
+        static void Main(string[] args)
         {
-            ServiceBase.Run(new RscHost());
+            ServiceBase service = new RscHost();
+            if (args.Length == 1 && args[0] == "/CMD")
+            {
+                ((RscHost)service).OnStart(null);
+                var input = String.Empty;
+                while (input != Configurator.Settings.GeneralSettings.QuitToken)
+                {
+                    input = Console.ReadLine();
+                }
+                ((RscHost)service).OnStop();
+            }
+            else
+            {
+                ServiceBase.Run(service);
+            }
+        }
+
+        public void StartCMD()
+        {
+            OnStart(new string[]{ });
         }
 
         protected override void OnStart(string[] args)
