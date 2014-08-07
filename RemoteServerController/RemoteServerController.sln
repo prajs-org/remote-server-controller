@@ -5,7 +5,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RscCore", "RscCore\RscCore.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RscLog", "RscLog\RscLog.csproj", "{70567E04-5625-49F2-BD18-9170C3BF9460}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RscHost", "RscCMDHost\RscHost.csproj", "{0BDA480C-6EE3-45D6-928C-F72A5A44E8CD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RscHost", "RscHost\RscHost.csproj", "{0BDA480C-6EE3-45D6-928C-F72A5A44E8CD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RscInterface", "RscInterface\RscInterface.csproj", "{92FC0032-5A4B-451A-AD89-881FA76B07D6}"
 EndProject
@@ -26,7 +26,7 @@ Global
 		SccProjectUniqueName3 = RscConfig\\RscConfig.csproj
 		SccProjectName3 = RscConfig
 		SccLocalPath3 = RscConfig
-		SccProjectUniqueName4 = RscCMDHost\\RscHost.csproj
+		SccProjectUniqueName4 = RscHost\\RscHost.csproj
 		SccProjectName4 = RSCCMDHost
 		SccLocalPath4 = RSCCMDHost
 	EndGlobalSection
