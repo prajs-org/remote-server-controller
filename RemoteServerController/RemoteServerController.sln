@@ -27,8 +27,8 @@ Global
 		SccProjectName3 = RscConfig
 		SccLocalPath3 = RscConfig
 		SccProjectUniqueName4 = RscHost\\RscHost.csproj
-		SccProjectName4 = RSCCMDHost
-		SccLocalPath4 = RSCCMDHost
+		SccProjectName4 = RscHost
+		SccLocalPath4 = RscHost
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
