@@ -34,8 +34,7 @@ namespace RscCore.Controllers
     /// </summary>
     public class Service
     {
-
-// --- Constructors ----------------------------------------------------
+        #region Construction
 
         /// <summary>
         /// Create instance of Service class. Instance can be created only by ControlFactory. If you create it directly, all permissions will be set to false.
@@ -46,7 +45,7 @@ namespace RscCore.Controllers
             this.Name = serviceName;
         }
 
-// --- Public properties ----------------------------------------------------
+        #endregion
 
         #region Public properties
 
@@ -60,8 +59,6 @@ namespace RscCore.Controllers
         }
 
         #endregion
-
-// --- Security properties ----------------------------------------------------
 
         #region Security properties
 
@@ -102,8 +99,6 @@ namespace RscCore.Controllers
         }
 
         #endregion
-
-// --- Public functions ----------------------------------------------------
 
         #region Public functions
 
@@ -197,8 +192,6 @@ namespace RscCore.Controllers
         }
 
         #endregion
-
-// --- Private functions ----------------------------------------------------
 
         #region Private functions
 
