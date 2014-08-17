@@ -1,40 +1,55 @@
-﻿/*
-Copyright (C) 2014 Karel Prajs
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Diagnostics;
-
+﻿/******************************************************************************
+ * Remote Server Controller, http://rsc.codeplex.com                          *
+ *                                                                            *
+ * Copyright (C) 2014 Karel Prajs                                             *
+ *                                                                            *
+ * This program is free software: you can redistribute it and/or modify       *
+ * it under the terms of the GNU General Public License as published by       *
+ * the Free Software Foundation, either version 3 of the License, or          *
+ * (at your option) any later version.                                        *
+ *                                                                            *
+ * This program is distributed in the hope that it will be useful,            *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of             *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the              *
+ * GNU General Public License for more details.                               *
+ *                                                                            *
+ * You should have received a copy of the GNU General Public License          *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.      *
+ ******************************************************************************/
 namespace RscLog
 {
+    // System namespaces
+    using System;
+    using System.Diagnostics;
+
+    // Project namespaces
+    using RscConfig;
+
+    /// <summary>
+    /// Default logger used everywhere within this application.
+    /// Currently set to log in Windows Event Log but you can rewrite it to use whatever system you want.
+    /// TODO: Maybe it would be nice idea to rewrite it as interface.
+    /// </summary>
     public static class Log
     {
+        #region Construction
+
         static EventLog eventLog = new EventLog();
 
         static Log()
         {
             // Default init if none set better
-            Init("RemoteServerController");
+            Init(Constants.AppName);
         }
 
         public static void Init(string appName)
         {
             eventLog.Source = appName;
         }
+
+        #endregion
+
+        #region Public functions
 
         public static void Info(string message, params object[] args)
         {
@@ -66,6 +81,10 @@ namespace RscLog
             WriteException(EventLogEntryType.Error, exception, comment);
         }
 
+        #endregion
+
+        #region Private functions
+
         private static void WriteException(EventLogEntryType level, Exception exception, string comment)
         {
             if (exception != null)
@@ -92,5 +111,7 @@ namespace RscLog
                 eventLog.WriteEntry(String.Format("INVALID LOG RECORD: {0}", message ?? String.Empty), EventLogEntryType.Error);
             }
         }
+
+        #endregion
     }
 }
