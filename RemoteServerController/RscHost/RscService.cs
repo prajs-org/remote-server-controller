@@ -23,7 +23,7 @@ namespace RscHost
             InitializeComponent();
         }
 
-        public void Start(string[] args)
+        public void StartForDebug(string[] args)
         {
             OnStart(args);
         }
@@ -55,7 +55,7 @@ namespace RscHost
             }
         }
 
-        public void Stop()
+        public void StopForDebug()
         {
             OnStop();
         }

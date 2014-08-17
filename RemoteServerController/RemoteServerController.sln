@@ -93,4 +93,10 @@ Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		BuildVersion_AssemblyInfoFilename = RemoteServerController.sln
+		BuildVersion_BuildAction = ReBuild
+		BuildVersion_ConfigurationName = Release
+		BuildVersion_UseGlobalSettings = False
+	EndGlobalSection
 EndGlobal

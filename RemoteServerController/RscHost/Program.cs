@@ -25,7 +25,7 @@ namespace RscHost
                 Helpers.WelcomeMessage();
 
                 // Start service
-                service.Start(new string[] { });
+                service.StartForDebug(new string[] { });
 
                 // Wait on exit command
                 while (true)
@@ -36,7 +36,7 @@ namespace RscHost
                 }
                 
                 // Stop service
-                service.Stop();
+                service.StopForDebug();
             }
             else
             {
