@@ -1,26 +1,49 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.ServiceModel.Web;
-using System.ServiceModel;
-using RscConfig;
-using System.ServiceModel.Description;
-using RscLog;
-using System.Security.Cryptography.X509Certificates;
-using System.Diagnostics;
-using System.IO;
-using System.Reflection;
-using RscInterface;
-
+﻿/******************************************************************************
+ * Remote Server Controller, http://rsc.codeplex.com                          *
+ *                                                                            *
+ * Copyright (C) 2014 Karel Prajs                                             *
+ *                                                                            *
+ * This program is free software: you can redistribute it and/or modify       *
+ * it under the terms of the GNU General Public License as published by       *
+ * the Free Software Foundation, either version 3 of the License, or          *
+ * (at your option) any later version.                                        *
+ *                                                                            *
+ * This program is distributed in the hope that it will be useful,            *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of             *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the              *
+ * GNU General Public License for more details.                               *
+ *                                                                            *
+ * You should have received a copy of the GNU General Public License          *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.      *
+ ******************************************************************************/
 namespace RscCore
 {
+    // System namespaces
+    using System;
+    using System.ServiceModel;
+    using System.ServiceModel.Web;
+    using System.ServiceModel.Description;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Reflection;
+
+    // Project namespaces
+    using RscConfig;
+    using RscLog;
+
+    /// <summary>
+    /// Static class provides static function construction various WCF endpoints.
+    /// </summary>
     public static class Endpoints
     {
         /// <summary>
-        /// Create and return new REST endpoint.
+        /// Create and return new REST endpoint with no security.
+        /// Common HTTP protocol is used.
+        /// No credentials are required to use this endpoint.
+        /// Configuration is taken directly from configuration file.
+        /// Cross Domain Scripts are always enabled.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>New HTTP endpoint</returns>
         public static WebServiceHost GetRESTHost()
         {
             // The new host
@@ -48,18 +71,21 @@ namespace RscCore
             }
             catch (Exception ex)
             {
-                Log.Error("Could not create REST host: "
-                    + ex.Message
-                    + ", "
-                    + ex.InnerException == null ? String.Empty : ex.InnerException.Message);
+                Log.Error(ex, "Could not create REST/HTTP host");
                 restHost = null;
             }
             return restHost;
         }
+
         /// <summary>
-        /// Create and return new REST endpoint secured by SSL.
+        /// Create and return new REST endpoint with no security.
+        /// Secured HTTPS protocol is used.
+        /// No credentials are required to use this endpoint.
+        /// Configuration is taken directly from configuration file.
+        /// Cross Domain Scripts are always enabled.
+        /// This function required special configuration and valid personal certificate, see documentation for more details.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>New HTTPS endpoint</returns>
         public static WebServiceHost GetRESTHostSSL()
         {
             // The new host
@@ -75,7 +101,7 @@ namespace RscCore
                 BindSSLToPort();
                 // Create host
                 restHost = new WebServiceHost(typeof(RESTController));
-                // No security
+                // Use SSL
                 WebHttpBinding binding = new WebHttpBinding(WebHttpSecurityMode.Transport);
                 // Allow cross domain scripts
                 binding.CrossDomainScriptAccessEnabled = Configurator.Settings.Network.CrossDomainScriptAccessEnabled;
@@ -89,13 +115,17 @@ namespace RscCore
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Could not create REST host");
+                Log.Error(ex, "Could not create REST/HTTPS host");
                 restHost = null;
             }
             return restHost;
         }
+
         /// <summary>
-        /// Bind SSL to application port using the given certificate. This allows the application to communicate via https protocol.
+        /// Function bind SSL to application port using the given certificate.
+        /// This allows the application to communicate via https protocol.
+        /// See documentation for details about configuration of personal certificates.
+        /// NOT TESTED WITH WINDOWS XP OR WINDOWS SERVER 2003 AND OLDER!
         /// </summary>
         private static void BindSSLToPort()
         {
