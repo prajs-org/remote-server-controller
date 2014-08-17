@@ -11,16 +11,27 @@ using System.Security.Cryptography.X509Certificates;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using RscInterface;
 
 namespace RscCore
 {
     public static class Endpoints
     {
+        /// <summary>
+        /// Create and return new REST endpoint.
+        /// </summary>
+        /// <returns></returns>
         public static WebServiceHost GetRESTHost()
         {
+            // The new host
             WebServiceHost restHost = null;
             try
             {
+                // Address
+                Uri uri = new Uri(String.Format("http://{0}:{1}/{2}",
+                    Configurator.Settings.Network.Host,
+                    Configurator.Settings.Network.Port,
+                    typeof(RESTController).Name));
                 // Create host
                 restHost = new WebServiceHost(typeof(RESTController));
                 // No security
@@ -30,14 +41,8 @@ namespace RscCore
                 // Create endpoint
                 ServiceEndpoint endPoint = new ServiceEndpoint(ContractDescription.GetContract(typeof(RESTController)),
                                                                binding,
-                                                               new EndpointAddress(new Uri(
-                                                                   new StringBuilder("http://")
-                                                                   .Append(Configurator.Settings.Network.Host)
-                                                                   .Append(":")
-                                                                   .Append(Configurator.Settings.Network.Port)
-                                                                   .Append("/RESTController")
-                                                                   .ToString())));
-                // Return final host
+                                                               new EndpointAddress(uri));
+                // Return the new host
                 restHost.AddServiceEndpoint(endPoint);
                 restHost.Authorization.ServiceAuthorizationManager = new AuthorizationManager();
             }
@@ -51,14 +56,21 @@ namespace RscCore
             }
             return restHost;
         }
-
+        /// <summary>
+        /// Create and return new REST endpoint secured by SSL.
+        /// </summary>
+        /// <returns></returns>
         public static WebServiceHost GetRESTHostSSL()
         {
             // The new host
             WebServiceHost restHost = null;
-
             try
             {
+                // Address
+                Uri uri = new Uri(String.Format("https://{0}:{1}/{2}",
+                    Configurator.Settings.Network.Host,
+                    Configurator.Settings.Network.Port,
+                    typeof(RESTController).Name));
                 // Bind SSL to configured port
                 BindSSLToPort();
                 // Create host
@@ -70,14 +82,8 @@ namespace RscCore
                 // Create endpoint
                 ServiceEndpoint endPoint = new ServiceEndpoint(ContractDescription.GetContract(typeof(RESTController)),
                                                                binding,
-                                                               new EndpointAddress(new Uri(
-                                                                   new StringBuilder("https://")
-                                                                   .Append(Configurator.Settings.Network.Host)
-                                                                   .Append(":")
-                                                                   .Append(Configurator.Settings.Network.Port)
-                                                                   .Append("/RESTController")
-                                                                   .ToString())));
-                // Return final host
+                                                               new EndpointAddress(uri));
+                // Return the new host
                 restHost.AddServiceEndpoint(endPoint);
                 restHost.Authorization.ServiceAuthorizationManager = new AuthorizationManager();
             }
@@ -88,7 +94,9 @@ namespace RscCore
             }
             return restHost;
         }
-
+        /// <summary>
+        /// Bind SSL to application port using the given certificate. This allows the application to communicate via https protocol.
+        /// </summary>
         private static void BindSSLToPort()
         {
             try
