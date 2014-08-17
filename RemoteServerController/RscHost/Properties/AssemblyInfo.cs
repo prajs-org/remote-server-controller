@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Remote Servant")]
+[assembly: AssemblyProduct("Remote Server Controller")]
 [assembly: AssemblyCopyright("Copyright © 2014 Karel Prajs")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

@@ -28,12 +28,10 @@ namespace RscLog
     {
         static EventLog eventLog = new EventLog();
 
-        public enum LogLevel { Silent, Debug, Info, Warning, Error, Fatal }
-
-        public static LogLevel Level
-        { 
-            set;
-            get;
+        static Log()
+        {
+            // Default init if none set better
+            Init("RemoteServerController");
         }
 
         public static void Init(string appName)
@@ -43,36 +41,58 @@ namespace RscLog
 
         public static void Info(string message, params object[] args)
         {
-            if (Level <= LogLevel.Info)
-                WriteLog(EventLogEntryType.Information, message, args);
+            WriteLog(EventLogEntryType.Information, message, args);
+        }
+
+        public static void Info(Exception exception, string comment)
+        {
+            WriteException(EventLogEntryType.Information, exception, comment);
         }
 
         public static void Warning(string message, params object[] args)
         {
-            if (Level <= LogLevel.Warning)
-                WriteLog(EventLogEntryType.Warning, message, args);
+            WriteLog(EventLogEntryType.Warning, message, args);
+        }
+
+        public static void Warning(Exception exception, string comment)
+        {
+            WriteException(EventLogEntryType.Warning, exception, comment);
         }
 
         public static void Error(string message, params object[] args)
         {
-            if (Level <= LogLevel.Error)
-                WriteLog(EventLogEntryType.Error, message, args);
+            WriteLog(EventLogEntryType.Error, message, args);
+        }
+
+        public static void Error(Exception exception, string comment)
+        {
+            WriteException(EventLogEntryType.Error, exception, comment);
+        }
+
+        private static void WriteException(EventLogEntryType level, Exception exception, string comment)
+        {
+            if (exception != null)
+            {
+                WriteLog(level, "Exception ({0}): {1} --- InnerExcetion: {2}.",
+                    comment,
+                    exception.Message,
+                    exception.InnerException != null ? exception.InnerException.Message : String.Empty);
+            }
+            else
+            {
+                WriteLog(level, "Empty exception ({0})", comment ?? String.Empty);
+            }
         }
 
         private static void WriteLog(EventLogEntryType level, string message, params object[] args)
         {
             try
             {
-                eventLog.WriteEntry(message, level);
+                eventLog.WriteEntry(String.Format(message, args), level);
             }
-            catch (Exception)
+            catch
             {
-                Console.Write(level.ToString() + ": (format exception) " + message + " - ARGUMENTS:");
-                foreach(var item in args)
-                {
-                    Console.Write(" <" + item + ">");
-                }
-                Console.WriteLine();
+                eventLog.WriteEntry(String.Format("INVALID LOG RECORD: {0}", message ?? String.Empty), EventLogEntryType.Error);
             }
         }
     }
