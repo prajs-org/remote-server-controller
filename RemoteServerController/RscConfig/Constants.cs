@@ -31,6 +31,11 @@ namespace RscConfig
     public static class Constants
     {
         /// <summary>
+        /// Flag used to force standalone host.
+        /// Should be set as Command line argument in host project properties.
+        /// </summary>
+        public static string StandaloneHostFlag = "/STANDALONE";
+        /// <summary>
         /// Use in various cases as common timeout
         /// </summary>
         public static int GeneralTimeout = 5000;
@@ -39,7 +44,8 @@ namespace RscConfig
         /// </summary>
         public static string AppShortcut = "RSC";
         /// <summary>
-        /// Full name of this applicaton as single word (without spaces)
+        /// Full name of this applicaton as single word (without spaces).
+        /// Should be same as Assembly Name because of issues with Windows Managed Service.
         /// </summary>
         public static string AppName = "RemoteServerController";
         /// <summary>
