@@ -21,9 +21,6 @@ using System.Diagnostics;
 
 namespace RscLog
 {
-    /// <summary>
-    /// TODO: implement some real logger
-    /// </summary>
     public static class Log
     {
         static EventLog eventLog = new EventLog();
