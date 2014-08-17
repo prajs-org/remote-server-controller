@@ -123,11 +123,11 @@ namespace RscCore.Controllers
                 Log.Warning("Service<{0}> is not allowed to be started!", this.Name);
                 if (this.AllowStatusCheck)
                 {
-                    return new ServiceActionResult(this.Name, this.GetStatusToken(), Constants.ErrorCode.NotAllowed);
+                    return new ServiceActionResult(this.Name, this.GetStatusToken(), ReturnCodes.ActionReturnCode.NotAllowed);
                 }
                 else
                 {
-                    return new ServiceActionResult(this.Name, null, Constants.ErrorCode.NotAllowed);
+                    return new ServiceActionResult(this.Name, null, ReturnCodes.ActionReturnCode.NotAllowed);
                 }
             }
         }
@@ -147,11 +147,11 @@ namespace RscCore.Controllers
                 Log.Warning("Service<{0}> is not allowed to be stopped!", this.Name);
                 if (this.AllowStatusCheck)
                 {
-                    return new ServiceActionResult(this.Name, this.GetStatusToken(), Constants.ErrorCode.NotAllowed);
+                    return new ServiceActionResult(this.Name, this.GetStatusToken(), ReturnCodes.ActionReturnCode.NotAllowed);
                 }
                 else
                 {
-                    return new ServiceActionResult(this.Name, null, Constants.ErrorCode.NotAllowed);
+                    return new ServiceActionResult(this.Name, null, ReturnCodes.ActionReturnCode.NotAllowed);
                 }
             }            
         }
@@ -164,12 +164,12 @@ namespace RscCore.Controllers
             if (this.AllowStatusCheck)
             {
                 var status = GetStatusToken();
-                return new ServiceStatus(this.Name, status, status == null ? Constants.ErrorCode.UnknownError : Constants.ErrorCode.OK);
+                return new ServiceStatus(this.Name, status, status == null ? ReturnCodes.ActionReturnCode.UnknownError : ReturnCodes.ActionReturnCode.OK);
             }
             else
             {
                 Log.Warning("Check of status of service<{0}> is not allowed!", this.Name);
-                return new ServiceStatus(this.Name, null, Constants.ErrorCode.NotAllowed);
+                return new ServiceStatus(this.Name, null, ReturnCodes.ActionReturnCode.NotAllowed);
             }
         }
         /// <summary>
@@ -213,14 +213,14 @@ namespace RscCore.Controllers
         private ServiceActionResult ChangeServiceStatus(ServiceControllerStatus newStatus, params ServiceControllerStatus[] allowedCurrentStatuses)
         {
             var currentStatus = GetStatusToken();
-            Constants.ErrorCode error_code = Constants.ErrorCode.OK;
+            ReturnCodes.ActionReturnCode error_code = ReturnCodes.ActionReturnCode.OK;
 
             if (currentStatus.HasValue)
             {
                 // Check if current status is in allowed statuses
                 if (!allowedCurrentStatuses.Contains(currentStatus.Value))
                 {
-                    error_code = Constants.ErrorCode.UnmetRequirements;
+                    error_code = ReturnCodes.ActionReturnCode.UnmetRequirements;
                     Log.Warning("Status of service<{0}> cannot be changed to<{1}> because current currentStatus<{2}> is not in allowed statuses.",
                         this.Name,
                         newStatus,
@@ -248,7 +248,7 @@ namespace RscCore.Controllers
                                     Log.Error("Status of service<{0}> cannot be changed because new status<{1}> is not supported.",
                                         this.Name,
                                         newStatus);
-                                    error_code = Constants.ErrorCode.NotSupported;
+                                    error_code = ReturnCodes.ActionReturnCode.NotSupported;
                                     break;
                             }
                             service.WaitForStatus(newStatus, timeout);
@@ -256,12 +256,12 @@ namespace RscCore.Controllers
                         }
                         catch (System.ServiceProcess.TimeoutException)
                         {
-                            error_code = Constants.ErrorCode.Timeout;
+                            error_code = ReturnCodes.ActionReturnCode.Timeout;
                             Log.Warning("Change of status of service<{0}> failed on timeout.", this.Name);
                         }
                         catch (Exception ex)
                         {
-                            error_code = Constants.ErrorCode.UnknownError;
+                            error_code = ReturnCodes.ActionReturnCode.UnknownError;
                             Log.Error(ex, "Change of status failed.");
                         }
                     }
@@ -269,7 +269,7 @@ namespace RscCore.Controllers
             }
             else
             {
-                error_code = Constants.ErrorCode.UnmetRequirements;
+                error_code = ReturnCodes.ActionReturnCode.UnmetRequirements;
                 Log.Error("Status of service<{0}> cannot be changed because current status cannot be determined.", this.Name);
             }
             return new ServiceActionResult(this.Name, currentStatus, error_code);

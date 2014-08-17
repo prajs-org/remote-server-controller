@@ -36,7 +36,7 @@ namespace RscInterface
         [DataMember]
         public string Result { get; set; }
 
-        public ServiceStatus(string name, ServiceControllerStatus? status, Constants.ErrorCode result)
+        public ServiceStatus(string name, ServiceControllerStatus? status, ReturnCodes.ActionReturnCode result)
         {
             this.Name = name;
             this.Status = status.HasValue ? status.ToString() : Constants.UknownToken;
@@ -56,7 +56,7 @@ namespace RscInterface
         [DataMember]
         public string Result { get; set; }
 
-        public ServiceActionResult(string name, ServiceControllerStatus? status, Constants.ErrorCode result)
+        public ServiceActionResult(string name, ServiceControllerStatus? status, ReturnCodes.ActionReturnCode result)
         {
             this.Name = name;
             this.Status = status.HasValue ? status.ToString() : Constants.UknownToken;

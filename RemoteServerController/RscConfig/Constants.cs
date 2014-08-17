@@ -1,50 +1,54 @@
-﻿/*
-Copyright (C) 2014 Karel Prajs
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
+﻿/******************************************************************************
+ * Remote Server Controller, http://rsc.codeplex.com                          *
+ *                                                                            *
+ * Copyright (C) 2014 Karel Prajs                                             *
+ *                                                                            *
+ * This program is free software: you can redistribute it and/or modify       *
+ * it under the terms of the GNU General Public License as published by       *
+ * the Free Software Foundation, either version 3 of the License, or          *
+ * (at your option) any later version.                                        *
+ *                                                                            *
+ * This program is distributed in the hope that it will be useful,            *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of             *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the              *
+ * GNU General Public License for more details.                               *
+ *                                                                            *
+ * You should have received a copy of the GNU General Public License          *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.      *
+ ******************************************************************************/
 namespace RscConfig
 {
+    // System namespaces
+    // -- none
+
+    // Project namespaces
+    // -- none
+
+    /// <summary>
+    /// Storage of all constants which are not mentioned to be configurable but should not been
+    /// directly in code as "magic numbers". This class should provide as little constants as possible.
+    /// </summary>
     public static class Constants
     {
+        /// <summary>
+        /// Use in various cases as common timeout
+        /// </summary>
         public static int GeneralTimeout = 5000;
-
+        /// <summary>
+        /// Shortcut of full name of this application
+        /// </summary>
         public static string AppShortcut = "RSC";
-
+        /// <summary>
+        /// Full name of this applicaton as single word (without spaces)
+        /// </summary>
         public static string AppName = "RemoteServerController";
-
+        /// <summary>
+        /// Full name of this application in "Display" format (what should user see)
+        /// </summary>
         public static string AppDisplayName = "Remote Server Controller";
-
+        /// <summary>
+        /// Description of uknown status
+        /// </summary>
         public static string UknownToken = "Unknown";
-
-        public enum ErrorCode { 
-            OK,                     // OK (success)
-            NotAllowed,             // Action is not allowed (not enough permissions)
-            NotSupported,           // Action is not supported
-            Timeout,                // Action failed on timeout
-            UnmetRequirements,      // Requirements for action are not fulfilled
-            UnknownError            // Some unspecified error
-        }
-
-        public enum ServiceActions {
-            Start,
-            Stop,
-            StatusCheck
-        }
     }
 }
