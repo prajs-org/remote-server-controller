@@ -22,6 +22,7 @@ using System.Text.RegularExpressions;
 
 namespace RscConfig
 {
+    #region Base
     public class Configurator : ConfigurationSection
     {
         private static Configurator instance;
@@ -57,6 +58,81 @@ namespace RscConfig
             get { return (Services)this["Services"]; }
         }
     }
+    #endregion
+
+    #region General settings
+    //--------------------------------------------------------------------------
+    // General settings
+    //--------------------------------------------------------------------------
+
+    public class GeneralSettings : ConfigurationElement
+    {
+        [ConfigurationProperty("QuitToken", DefaultValue = "quit!", IsRequired = true)]
+        [StringValidator(MinLength = 1)]
+        public string QuitToken
+        {
+            set { this["QuitToken"] = value; }
+            get { return (string)this["QuitToken"]; }
+        }
+
+        [ConfigurationProperty("LogLevel", DefaultValue = "Info", IsRequired = true)]
+        public string LogLevel
+        {
+            set { this["LogLevel"] = value; }
+            get { return (string)this["LogLevel"]; }
+        }
+    }
+    #endregion
+
+    #region Network
+    //--------------------------------------------------------------------------
+    // Network
+    //--------------------------------------------------------------------------
+
+    public class Network : ConfigurationElement
+    {
+        [ConfigurationProperty("Host", DefaultValue = "localhost", IsRequired = true)]
+        public string Host
+        {
+            set { this["Host"] = value; }
+            get { return (string)this["Host"]; }
+        }
+
+        [ConfigurationProperty("Port", DefaultValue = "55011", IsRequired = true)]
+        [LongValidator(MinValue = 0, MaxValue = long.MaxValue)]
+        public long Port
+        {
+            set { this["Port"] = value; }
+            get { return (long)this["Port"]; }
+        }
+
+        [ConfigurationProperty("UseSSL", DefaultValue = false, IsRequired = true)]
+        public bool UseSSL
+        {
+            set { this["UseSSL"] = value; }
+            get { return (bool)this["UseSSL"]; }
+        }
+
+        [ConfigurationProperty("CertificateThumbprint", DefaultValue = null, IsRequired = true)]
+        public string CertificateThumbprint
+        {
+            set { this["CertificateThumbprint"] = value; }
+            get { return Regex.Replace((string)this["CertificateThumbprint"], @"\s+", String.Empty); }
+        }
+
+        [ConfigurationProperty("CrossDomainScriptAccessEnabled", DefaultValue = false, IsRequired = true)]
+        public bool CrossDomainScriptAccessEnabled
+        {
+            set { this["CrossDomainScriptAccessEnabled"] = value; }
+            get { return (bool)this["CrossDomainScriptAccessEnabled"]; }
+        }
+    }
+    #endregion
+
+    #region Services
+    //--------------------------------------------------------------------------
+    // Services
+    //--------------------------------------------------------------------------
 
     public class Services : ConfigurationElement
     {
@@ -134,61 +210,5 @@ namespace RscConfig
             set { base["AllowStop"] = value; }
         }
     }
-
-    public class Network : ConfigurationElement 
-    {
-        [ConfigurationProperty("Host", DefaultValue = "localhost", IsRequired = true)]
-        public string Host
-        {
-            set { this["Host"] = value; }
-            get { return (string)this["Host"]; }
-        }
-
-        [ConfigurationProperty("Port", DefaultValue = "55011", IsRequired = true)]
-        [LongValidator(MinValue=0, MaxValue=long.MaxValue)]
-        public long Port
-        {
-            set { this["Port"] = value; }
-            get { return (long)this["Port"]; }
-        }
-
-        [ConfigurationProperty("UseSSL", DefaultValue = false, IsRequired = true)]
-        public bool UseSSL
-        {
-            set { this["UseSSL"] = value; }
-            get { return (bool)this["UseSSL"]; }
-        }
-
-        [ConfigurationProperty("CertificateThumbprint", DefaultValue = null, IsRequired = true)]
-        public string CertificateThumbprint
-        {
-            set { this["CertificateThumbprint"] = value; }
-            get { return Regex.Replace((string)this["CertificateThumbprint"], @"\s+", String.Empty); }
-        }
-
-        [ConfigurationProperty("CrossDomainScriptAccessEnabled", DefaultValue = false, IsRequired = true)]
-        public bool CrossDomainScriptAccessEnabled
-        {
-            set { this["CrossDomainScriptAccessEnabled"] = value; }
-            get { return (bool)this["CrossDomainScriptAccessEnabled"]; }
-        }
-    }
-
-    public class GeneralSettings : ConfigurationElement
-    {
-        [ConfigurationProperty("QuitToken", DefaultValue = "quit!", IsRequired = true)]
-        [StringValidator(MinLength=1)]
-        public string QuitToken
-        {
-            set { this["QuitToken"] = value; }
-            get { return (string)this["QuitToken"]; }
-        }
-
-        [ConfigurationProperty("LogLevel", DefaultValue = "Info", IsRequired = true)]
-        public string LogLevel
-        {
-            set { this["LogLevel"] = value; }
-            get { return (string)this["LogLevel"]; }
-        }
-    }
+    #endregion
 }
