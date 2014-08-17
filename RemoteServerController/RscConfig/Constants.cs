@@ -22,6 +22,14 @@ namespace RscConfig
 {
     public static class Constants
     {
+        public static int GeneralTimeout = 5000;
+
+        public static string AppShortcut = "RSC";
+
+        public static string AppName = "RemoteServerController";
+
+        public static string AppDisplayName = "Remote Server Controller";
+
         public static string UknownToken = "Unknown";
 
         public enum ErrorCode { 

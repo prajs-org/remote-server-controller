@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Configuration;
+using System.Text.RegularExpressions;
 
 namespace RscConfig
 {
@@ -32,7 +33,7 @@ namespace RscConfig
 
         public static Configurator Settings
         {
-            get { return instance; }
+            get{ return instance; }
         }
 
         [ConfigurationProperty("GeneralSettings", IsRequired = true)]
@@ -156,6 +157,13 @@ namespace RscConfig
         {
             set { this["UseSSL"] = value; }
             get { return (bool)this["UseSSL"]; }
+        }
+
+        [ConfigurationProperty("CertificateThumbprint", DefaultValue = null, IsRequired = true)]
+        public string CertificateThumbprint
+        {
+            set { this["CertificateThumbprint"] = value; }
+            get { return Regex.Replace((string)this["CertificateThumbprint"], @"\s+", String.Empty); }
         }
 
         [ConfigurationProperty("CrossDomainScriptAccessEnabled", DefaultValue = false, IsRequired = true)]
