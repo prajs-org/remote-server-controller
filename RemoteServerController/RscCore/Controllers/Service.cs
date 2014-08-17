@@ -1,30 +1,37 @@
-﻿/*
-Copyright (C) 2014 Karel Prajs
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.ServiceProcess;
-
-using RscLog;
-using RscConfig;
-using RscInterface;
-
+﻿/******************************************************************************
+ * Remote Server Controller, http://rsc.codeplex.com                          *
+ *                                                                            *
+ * Copyright (C) 2014 Karel Prajs                                             *
+ *                                                                            *
+ * This program is free software: you can redistribute it and/or modify       *
+ * it under the terms of the GNU General Public License as published by       *
+ * the Free Software Foundation, either version 3 of the License, or          *
+ * (at your option) any later version.                                        *
+ *                                                                            *
+ * This program is distributed in the hope that it will be useful,            *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of             *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the              *
+ * GNU General Public License for more details.                               *
+ *                                                                            *
+ * You should have received a copy of the GNU General Public License          *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.      *
+ ******************************************************************************/
 namespace RscCore.Controllers
 {
+    // System namespaces
+    using System;
+    using System.Linq;
+    using System.ServiceProcess;
+
+    // Project namespaces
+    using RscLog;
+    using RscConfig;
+    using RscInterface;
+
+    /// <summary>
+    /// Controller class designated for controlling of Windows Managed Services.
+    /// Each object of class Service can handle single Windows Managed Service.
+    /// </summary>
     public class Service
     {
 
@@ -106,7 +113,6 @@ namespace RscCore.Controllers
         /// <returns>Action result</returns>
         public ServiceActionResult Start()
         {
-            Log.Info("Incoming request: Service/Start/{0}", this.Name);
             if (this.AllowStart)
             {
                 // If action is allowed, StatusCheck has to be considered as allowed as well.
@@ -114,7 +120,7 @@ namespace RscCore.Controllers
             }
             else
             {
-                Log.Warning("Request Service/Start/{0} not allowed", this.Name);
+                Log.Warning("Service<{0}> is not allowed to be started!", this.Name);
                 if (this.AllowStatusCheck)
                 {
                     return new ServiceActionResult(this.Name, this.GetStatusToken(), Constants.ErrorCode.NotAllowed);
@@ -131,7 +137,6 @@ namespace RscCore.Controllers
         /// <returns>Action result</returns>
         public ServiceActionResult Stop()
         {
-            Log.Info("Incoming request: Service/Stop/{0}", this.Name);
             if (this.AllowStop)
             {
                 // If action is allowed, StatusCheck has to be considered as allowed as well.
@@ -139,7 +144,7 @@ namespace RscCore.Controllers
             }
             else
             {
-                Log.Warning("Request Service/Stop/{0} not allowed", this.Name);
+                Log.Warning("Service<{0}> is not allowed to be stopped!", this.Name);
                 if (this.AllowStatusCheck)
                 {
                     return new ServiceActionResult(this.Name, this.GetStatusToken(), Constants.ErrorCode.NotAllowed);
@@ -156,7 +161,6 @@ namespace RscCore.Controllers
         /// <returns></returns>
         public ServiceStatus GetStatus()
         {
-            Log.Info("Incoming request: Service/Status/{0}", this.Name);
             if (this.AllowStatusCheck)
             {
                 var status = GetStatusToken();
@@ -164,7 +168,7 @@ namespace RscCore.Controllers
             }
             else
             {
-                Log.Warning("Request Service/Status/{0} not allowed", this.Name);
+                Log.Warning("Check of status of service<{0}> is not allowed!", this.Name);
                 return new ServiceStatus(this.Name, null, Constants.ErrorCode.NotAllowed);
             }
         }
@@ -199,23 +203,28 @@ namespace RscCore.Controllers
         #region Private functions
 
         /// <summary>
-        /// Change status of service.
+        /// Function will try to change status of service according to argument newStatus.
+        /// The change is only allowed if current status of service is within the list given by argument allowedCurrentStatuses.
         /// </summary>
         /// <param name="serviceName">Name of service</param>
         /// <param name="newStatus">New status</param>
         /// <param name="allowedCurrentStatuses">Service has to have one of these statuses, otherwise the change fails.</param>
-        /// <returns>ActionResult</returns>
+        /// <returns>Allways returns ActionResult</returns>
         private ServiceActionResult ChangeServiceStatus(ServiceControllerStatus newStatus, params ServiceControllerStatus[] allowedCurrentStatuses)
         {
-            var status = GetStatusToken();
+            var currentStatus = GetStatusToken();
             Constants.ErrorCode error_code = Constants.ErrorCode.OK;
 
-            if (status.HasValue)
+            if (currentStatus.HasValue)
             {
-                if (!allowedCurrentStatuses.Contains(status.Value))
+                // Check if current status is in allowed statuses
+                if (!allowedCurrentStatuses.Contains(currentStatus.Value))
                 {
                     error_code = Constants.ErrorCode.UnmetRequirements;
-                    Log.Info("ServiceStart<{0}> not in allowed status.", this.Name);
+                    Log.Warning("Status of service<{0}> cannot be changed to<{1}> because current currentStatus<{2}> is not in allowed statuses.",
+                        this.Name,
+                        newStatus,
+                        currentStatus);
                 }
                 else
                 {
@@ -236,22 +245,24 @@ namespace RscCore.Controllers
                                     service.Pause();
                                     break;
                                 default:
-                                    Log.Error("Unsupported action<{0}>.", newStatus);
+                                    Log.Error("Status of service<{0}> cannot be changed because new status<{1}> is not supported.",
+                                        this.Name,
+                                        newStatus);
                                     error_code = Constants.ErrorCode.NotSupported;
                                     break;
                             }
                             service.WaitForStatus(newStatus, timeout);
-                            status = GetStatusToken();
+                            currentStatus = GetStatusToken();
                         }
                         catch (System.ServiceProcess.TimeoutException)
                         {
                             error_code = Constants.ErrorCode.Timeout;
-                            Log.Warning("Service<{0}> status change failed. TimeoutException.", this.Name);
+                            Log.Warning("Change of status of service<{0}> failed on timeout.", this.Name);
                         }
                         catch (Exception ex)
                         {
                             error_code = Constants.ErrorCode.UnknownError;
-                            Log.Error("Service<{0}> status change failed. Exception: {1}", this.Name, ex.InnerException == null ? ex.Message : ex.InnerException.Message);
+                            Log.Error(ex, "Change of status failed.");
                         }
                     }
                 }
@@ -259,9 +270,9 @@ namespace RscCore.Controllers
             else
             {
                 error_code = Constants.ErrorCode.UnmetRequirements;
-                Log.Error("Service<{0}> has unknown status. Cannot change status.", this.Name);
+                Log.Error("Status of service<{0}> cannot be changed because current status cannot be determined.", this.Name);
             }
-            return new ServiceActionResult(this.Name, status, error_code);
+            return new ServiceActionResult(this.Name, currentStatus, error_code);
         }
 
         #endregion

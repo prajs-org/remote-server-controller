@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RscConfig", "RscConfig\RscC
 EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 5
+		SccNumberOfProjects = 6
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs13
 		SccLocalPath0 = .
@@ -29,6 +29,9 @@ Global
 		SccProjectUniqueName4 = RscHost\\RscHost.csproj
 		SccProjectName4 = RscHost
 		SccLocalPath4 = RscHost
+		SccProjectUniqueName5 = RscInterface\\RscInterface.csproj
+		SccProjectName5 = RscInterface
+		SccLocalPath5 = RscInterface
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
