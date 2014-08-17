@@ -36,6 +36,14 @@ namespace RscConfig
         /// </summary>
         public static string StandaloneHostFlag = "/STANDALONE";
         /// <summary>
+        /// Flag used during installation to install Windows Managed Service.
+        /// </summary>
+        public static string InstallServiceFlag = "/INSTALLSERVICE";
+        /// <summary>
+        /// Flag used during installation to uninstall Windows Managed Service.
+        /// </summary>
+        public static string UninstallServiceFlag = "/UNINSTALLSERVICE";
+        /// <summary>
         /// Use in various cases as common timeout
         /// </summary>
         public static int GeneralTimeout = 5000;

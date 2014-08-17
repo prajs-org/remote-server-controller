@@ -63,6 +63,7 @@
       <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.ServiceModel.Web.dll</HintPath>
     </Reference>
     <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -79,6 +80,7 @@
     <Compile Include="RscService.Designer.cs">
       <DependentUpon>RscService.cs</DependentUpon>
     </Compile>
+    <Compile Include="ServiceHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

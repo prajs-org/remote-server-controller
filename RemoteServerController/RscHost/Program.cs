@@ -25,6 +25,8 @@ namespace RscHost
 
     // Project namespaces
     using RscConfig;
+    using System.Configuration.Install;
+    using System.Reflection;
 
     static class Program
     {
@@ -40,34 +42,52 @@ namespace RscHost
             var service = new RscService();
 
             // Start service or run it on console for debug
-            if (args.Count() > 0 && args[0] == Constants.StandaloneHostFlag)
+            if (args.Count() > 0)
             {
-                // ----------------------------
-                // Standalone host
-                // ----------------------------
-
-                // Print welcome message
-                Helpers.WelcomeMessage();
-
-                // Start service
-                service.StartManually();
-
-                // Wait on exit command
-                while (true)
+                if (args[0] == Constants.StandaloneHostFlag)
                 {
-                    string input = Console.ReadLine();
-                    if (input == Configurator.Settings.GeneralSettings.QuitToken)
-                        break;
+                    // ----------------------
+                    // Run in standalone host
+                    // ----------------------
+
+                    // Print welcome message
+                    Helpers.WelcomeMessage();
+                    // Start service
+                    service.StartManually();
+                    // Wait on exit command
+                    while (true)
+                    {
+                        string input = Console.ReadLine();
+                        if (input == Configurator.Settings.GeneralSettings.QuitToken)
+                            break;
+                    }
+                    // Stop service
+                    service.StopManually();
                 }
-                
-                // Stop service
-                service.StopManually();
+                else if (args[0] == Constants.InstallServiceFlag)
+                {
+                    // --------------------------------------------------------
+                    // Install this program as Windows Managed Service and quit
+                    // --------------------------------------------------------
+
+                    ServiceHandler.InstallService(Constants.AppName);
+                    return;
+                }
+                else if (args[0] == Constants.UninstallServiceFlag)
+                {
+                    // ----------------------------------------------------------
+                    // Uninstall this program as Windows Managed Service and quit
+                    // ----------------------------------------------------------
+
+                    ServiceHandler.UninstallService(Constants.AppName);
+                    return;
+                }
             }
             else
             {
-                // ----------------------------
-                // Windows Managed Service host
-                // ----------------------------
+                // ------------------------------
+                // Run as Windows Managed Service
+                // ------------------------------
 
                 ServiceBase.Run(service);
             }

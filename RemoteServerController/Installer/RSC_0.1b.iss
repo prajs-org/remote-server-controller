@@ -43,3 +43,10 @@ Source: "D:\Work\Sources\RSC\RemoteServerController\RscHost\bin\Release\RscLog.d
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 
+[Run]
+Filename: "{app}\RemoteServerController.exe"; Parameters: "/INSTALLSERVICE";
+
+[UninstallRun]
+Filename: "{app}\RemoteServerController.exe"; Parameters: "/UNINSTALLSERVICE";
+
+
