@@ -11,6 +11,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RscInterface", "RscInterfac
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RscConfig", "RscConfig\RscConfig.csproj", "{4CA510AF-EF9B-4696-A777-584BC831F0B5}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{06B95DA8-E9FF-4C4B-9D6A-7605B6209C60}"
+	ProjectSection(SolutionItems) = preProject
+		license.txt = license.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
 		SccNumberOfProjects = 6
@@ -97,9 +102,9 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		BuildVersion_AssemblyInfoFilename = RemoteServerController.sln
-		BuildVersion_BuildAction = ReBuild
-		BuildVersion_ConfigurationName = Release
 		BuildVersion_UseGlobalSettings = False
+		BuildVersion_ConfigurationName = Release
+		BuildVersion_BuildAction = ReBuild
+		BuildVersion_AssemblyInfoFilename = RemoteServerController.sln
 	EndGlobalSection
 EndGlobal
