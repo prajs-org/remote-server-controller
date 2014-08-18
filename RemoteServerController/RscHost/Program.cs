@@ -82,6 +82,16 @@ namespace RscHost
                     ServiceHandler.UninstallService(Constants.AppName);
                     return;
                 }
+                else if (args[0] == Constants.ReinstallServiceFlag)
+                {
+                    // ----------------------------------------------------------
+                    // Reinstall this program as Windows Managed Service and quit
+                    // ----------------------------------------------------------
+
+                    ServiceHandler.UninstallService(Constants.AppName);
+                    ServiceHandler.InstallService(Constants.AppName);
+                    return;
+                }
             }
             else
             {

@@ -43,28 +43,30 @@ namespace RscCore.Controllers
         {
             Service service = new Service(serviceName);
             AddService serviceConfiguration;
+            // Forbid everything unless configuration is found.
+            bool forbidAll = true;
             // Load configuration of service from configuration file
             if (Configurator.Settings.Services.AllowedServices.GetService(serviceName, out serviceConfiguration))
             {
-                // Set permissions (or no permissions if service is not configurated)
-
-                // --- Allow Start (service may be started)
-                service.GetType().GetField("allowStart", BindingFlags.NonPublic | BindingFlags.Instance)
-                    .SetValue(service, serviceConfiguration == null ? false : serviceConfiguration.AllowStart);
-
-                // --- Allow Stop (service may be stopped)
-                service.GetType().GetField("allowStop", BindingFlags.NonPublic | BindingFlags.Instance)
-                    .SetValue(service, serviceConfiguration == null ? false : serviceConfiguration.AllowStop);
-
-                // --- Allow Status Check (user can check status of given service)
-                service.GetType().GetField("allowStatusCheck", BindingFlags.NonPublic | BindingFlags.Instance)
-                    .SetValue(service, serviceConfiguration == null ? false : serviceConfiguration.AllowStatusCheck);
+                // Okay, service is configured - remove the forbidAll flag.
+                forbidAll = false;
             }
             else
             {
                 Log.Warning("Processing of service<{0}> is not allowed!", serviceName);
-                service = null;
             }
+            // --- Allow Start (service may be started)
+            service.GetType().GetField("allowStart", BindingFlags.NonPublic | BindingFlags.Instance)
+                .SetValue(service, forbidAll ? false : serviceConfiguration.AllowStart);
+
+            // --- Allow Stop (service may be stopped)
+            service.GetType().GetField("allowStop", BindingFlags.NonPublic | BindingFlags.Instance)
+                .SetValue(service, forbidAll ? false : serviceConfiguration.AllowStop);
+
+            // --- Allow Status Check (user can check status of given service)
+            service.GetType().GetField("allowStatusCheck", BindingFlags.NonPublic | BindingFlags.Instance)
+                .SetValue(service, forbidAll ? false : serviceConfiguration.AllowStatusCheck);
+            
             return service;
         }
     }

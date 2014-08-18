@@ -77,7 +77,8 @@ namespace RscHost
         private static void StartService(string serviceName)
         {
             ServiceController service = new ServiceController(serviceName);
-            service.Start();
+            if (service.Status != ServiceControllerStatus.Running)
+                service.Start();
         }
         /// <summary>
         /// Stop installed service.
@@ -86,7 +87,8 @@ namespace RscHost
         private static void StopService(string serviceName)
         {
             ServiceController service = new ServiceController(serviceName);
-            service.Stop();
+            if (service.Status != ServiceControllerStatus.Stopped)
+                service.Stop();
         }
     }
 }
