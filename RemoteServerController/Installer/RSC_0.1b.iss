@@ -2,7 +2,8 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Remote Server Controller"
-#define MyAppVersion "0.1b"
+#define MyAppVersion "0.1.9.14230b"
+#define MyAppYear "2014"
 #define MyAppPublisher "Karel Prajs"
 #define MyAppURL "http://rsc.codeplex.com"
 #define MyAppExeName "RemoteServerController.exe"
@@ -16,6 +17,7 @@ AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}
 AppPublisher={#MyAppPublisher}
+AppCopyright=Copyright (C) {#MyAppYear} {#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
@@ -37,6 +39,7 @@ Source: "D:\Work\Sources\RSC\RemoteServerController\RscHost\bin\Release\RscConfi
 Source: "D:\Work\Sources\RSC\RemoteServerController\RscHost\bin\Release\RscCore.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\Work\Sources\RSC\RemoteServerController\RscHost\bin\Release\RscInterface.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\Work\Sources\RSC\RemoteServerController\RscHost\bin\Release\RscLog.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\Work\Sources\RSC\RemoteServerController\license.txt"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
