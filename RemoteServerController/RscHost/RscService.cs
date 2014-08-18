@@ -76,8 +76,15 @@ namespace RscHost
                 {
                     host = RscCore.Endpoints.GetRESTHost();
                 }
-                host.Open();
-                Log.Info("Service is running on " + Configurator.Settings.Network.Host + ":" + Configurator.Settings.Network.Port);
+                if (host != null)
+                {
+                    host.Open();
+                    Log.Info("Service is running on " + Configurator.Settings.Network.Host + ":" + Configurator.Settings.Network.Port);
+                }
+                else
+                {
+                    Log.Error("Host not created.");
+                }
             }
             catch (Exception ex)
             {
@@ -119,6 +126,7 @@ namespace RscHost
             service.ServiceName = Constants.AppName;
             service.DisplayName = Constants.AppDisplayName;
             service.Description = "Service allows remote users to control this server.";
+            service.StartType = ServiceStartMode.Automatic;
             Installers.Add(process);
             Installers.Add(service);
         }

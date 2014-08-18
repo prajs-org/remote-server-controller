@@ -44,6 +44,10 @@ namespace RscConfig
         /// </summary>
         public static string UninstallServiceFlag = "/UNINSTALLSERVICE";
         /// <summary>
+        /// Flag used during installation to reinstall Windows Managed Service.
+        /// </summary>
+        public static string ReinstallServiceFlag = "/REINSTALLSERVICE";
+        /// <summary>
         /// Use in various cases as common timeout
         /// </summary>
         public static int GeneralTimeout = 5000;

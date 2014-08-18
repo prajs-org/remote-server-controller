@@ -98,20 +98,26 @@ namespace RscCore
                     Configurator.Settings.Network.Port,
                     typeof(RESTController).Name));
                 // Bind SSL to configured port
-                BindSSLToPort();
-                // Create host
-                restHost = new WebServiceHost(typeof(RESTController));
-                // Use SSL
-                WebHttpBinding binding = new WebHttpBinding(WebHttpSecurityMode.Transport);
-                // Allow cross domain scripts
-                binding.CrossDomainScriptAccessEnabled = Configurator.Settings.Network.CrossDomainScriptAccessEnabled;
-                // Create endpoint
-                ServiceEndpoint endPoint = new ServiceEndpoint(ContractDescription.GetContract(typeof(RESTController)),
-                                                               binding,
-                                                               new EndpointAddress(uri));
-                // Return the new host
-                restHost.AddServiceEndpoint(endPoint);
-                restHost.Authorization.ServiceAuthorizationManager = new AuthorizationManager();
+                if (RebindSSLToPort())
+                {
+                    // Create host
+                    restHost = new WebServiceHost(typeof(RESTController));
+                    // Use SSL
+                    WebHttpBinding binding = new WebHttpBinding(WebHttpSecurityMode.Transport);
+                    // Allow cross domain scripts
+                    binding.CrossDomainScriptAccessEnabled = Configurator.Settings.Network.CrossDomainScriptAccessEnabled;
+                    // Create endpoint
+                    ServiceEndpoint endPoint = new ServiceEndpoint(ContractDescription.GetContract(typeof(RESTController)),
+                                                                   binding,
+                                                                   new EndpointAddress(uri));
+                    // Return the new host
+                    restHost.AddServiceEndpoint(endPoint);
+                    restHost.Authorization.ServiceAuthorizationManager = new AuthorizationManager();
+                }
+                else
+                {
+                    throw new InvalidOperationException("Port is already in use. Cannot free it.");
+                }
             }
             catch (Exception ex)
             {
@@ -122,35 +128,104 @@ namespace RscCore
         }
 
         /// <summary>
+        /// Try to bind SSL to application port.
+        /// If this port is already taken, try to free it and rebind it for our purpose.
+        /// NOT TESTED WITH WINDOWS XP OR WINDOWS SERVER 2003 AND OLDER!
+        /// </summary>
+        /// <returns>True if port was binded, false otherwise.</returns>
+        private static bool RebindSSLToPort()
+        {
+            bool portBinded = false;
+            if (BindSSLToPort() != 0)
+            {
+                Log.Info("Port<{0}> already used. Trying to free it.", Configurator.Settings.Network.Port);
+                if (UnbindSSLFromPort() == 0)
+                {
+                    if (BindSSLToPort() != 0)
+                    {
+                        Log.Error("Binding SSL to port<{0}> failed.", Configurator.Settings.Network.Port);
+                    }
+                    else
+                    {
+                        portBinded = true;
+                    }
+                }
+                else
+                {
+                    Log.Error("Cannot free port<{0}>.", Configurator.Settings.Network.Port);
+                }
+            }
+            else
+            {
+                portBinded = true;
+            }
+            return portBinded;
+        }
+
+        /// <summary>
         /// Function bind SSL to application port using the given certificate.
         /// This allows the application to communicate via https protocol.
         /// See documentation for details about configuration of personal certificates.
         /// NOT TESTED WITH WINDOWS XP OR WINDOWS SERVER 2003 AND OLDER!
         /// </summary>
-        private static void BindSSLToPort()
+        private static int BindSSLToPort()
         {
             try
             {
-                Process bindSSLToPort = new Process();
-                bindSSLToPort.StartInfo.FileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.SystemX86), "netsh.exe");
-                bindSSLToPort.StartInfo.Arguments = string.Format(@"netsh http add sslcert ipport=0.0.0.0:{0} certhash={1} appid={{{2}}}",
+                string command = string.Format(@" http add sslcert ipport=0.0.0.0:{0} certhash={1} appid={{{2}}}",
                     Configurator.Settings.Network.Port,
                     Configurator.Settings.Network.CertificateThumbprint,
                     Assembly.GetExecutingAssembly().GetType().GUID.ToString(),
                     Environment.UserDomainName,
                     Environment.UserName);
+                Process bindSSLToPort = new Process();
+                bindSSLToPort.StartInfo.FileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "netsh.exe");
+                bindSSLToPort.StartInfo.Arguments = command;
                 bindSSLToPort.Start();
                 bindSSLToPort.WaitForExit(Constants.GeneralTimeout);
-                // ExitCode other then zero does not need to be a problem. But warn about it.
-                if (bindSSLToPort.ExitCode > 0)
+                if (bindSSLToPort.ExitCode != 0)
                 {
-                    Log.Warning("Binding SSL to port<{0}> exited with ExitCode<{1}>.", Configurator.Settings.Network.Port, bindSSLToPort.ExitCode);
+                    Log.Warning("Could not bind port<{0} using this command<{1}>",
+                        Configurator.Settings.Network.Port,
+                        command);
                 }
+                return bindSSLToPort.ExitCode;
             }
             catch (Exception ex)
             {
                 Log.Error(ex, "Could not bind SSL to port");
-                throw;
+                return -1;
+            }
+        }
+
+        /// <summary>
+        /// Function unbind SSL from application port.
+        /// See documentation for details about configuration of personal certificates.
+        /// NOT TESTED WITH WINDOWS XP OR WINDOWS SERVER 2003 AND OLDER!
+        /// </summary>
+        private static int UnbindSSLFromPort()
+        {
+            try
+            {
+                string command = string.Format(@" http delete sslcert ipport=0.0.0.0:{0}",
+                    Configurator.Settings.Network.Port);
+                Process unbindSSLFromPort = new Process();
+                unbindSSLFromPort.StartInfo.FileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.SystemX86), "netsh.exe");
+                unbindSSLFromPort.StartInfo.Arguments = command;
+                unbindSSLFromPort.Start();
+                unbindSSLFromPort.WaitForExit(Constants.GeneralTimeout);
+                if (unbindSSLFromPort.ExitCode != 0)
+                {
+                    Log.Warning("Could not free port<{0} using this command<{1}>",
+                        Configurator.Settings.Network.Port,
+                        command);
+                }
+                return unbindSSLFromPort.ExitCode;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Could not unbind SSL from port");
+                return -1;
             }
         }
     }
