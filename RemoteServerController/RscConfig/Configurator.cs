@@ -75,13 +75,6 @@ namespace RscConfig
             set { this["QuitToken"] = value; }
             get { return (string)this["QuitToken"]; }
         }
-
-        [ConfigurationProperty("LogLevel", DefaultValue = "Info", IsRequired = true)]
-        public string LogLevel
-        {
-            set { this["LogLevel"] = value; }
-            get { return (string)this["LogLevel"]; }
-        }
     }
 
     #endregion

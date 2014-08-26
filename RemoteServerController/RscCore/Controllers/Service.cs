@@ -115,7 +115,7 @@ namespace RscCore.Controllers
             }
             else
             {
-                Log.Warning("Service<{0}> is not allowed to be started!", this.Name);
+                Log.Alert("Service<{0}> is not allowed to be started!", this.Name);
                 if (this.AllowStatusCheck)
                 {
                     return new ServiceActionResult(this.Name, this.GetStatusToken(), ReturnCodes.ActionReturnCode.NotAllowed);
@@ -139,7 +139,7 @@ namespace RscCore.Controllers
             }
             else
             {
-                Log.Warning("Service<{0}> is not allowed to be stopped!", this.Name);
+                Log.Alert("Service<{0}> is not allowed to be stopped!", this.Name);
                 if (this.AllowStatusCheck)
                 {
                     return new ServiceActionResult(this.Name, this.GetStatusToken(), ReturnCodes.ActionReturnCode.NotAllowed);
@@ -163,7 +163,7 @@ namespace RscCore.Controllers
             }
             else
             {
-                Log.Warning("Check of status of service<{0}> is not allowed!", this.Name);
+                Log.Alert("Check of status of service<{0}> is not allowed!", this.Name);
                 return new ServiceStatus(this.Name, null, ReturnCodes.ActionReturnCode.NotAllowed);
             }
         }
@@ -214,7 +214,7 @@ namespace RscCore.Controllers
                 if (!allowedCurrentStatuses.Contains(currentStatus.Value))
                 {
                     error_code = ReturnCodes.ActionReturnCode.UnmetRequirements;
-                    Log.Warning("Status of service<{0}> cannot be changed to<{1}> because current currentStatus<{2}> is not in allowed statuses.",
+                    Log.Alert("Status of service<{0}> cannot be changed to<{1}> because current currentStatus<{2}> is not in allowed statuses.",
                         this.Name,
                         newStatus,
                         currentStatus);
@@ -250,7 +250,7 @@ namespace RscCore.Controllers
                         catch (System.ServiceProcess.TimeoutException)
                         {
                             error_code = ReturnCodes.ActionReturnCode.Timeout;
-                            Log.Warning("Change of status of service<{0}> failed on timeout.", this.Name);
+                            Log.Alert("Change of status of service<{0}> failed on timeout.", this.Name);
                         }
                         catch (Exception ex)
                         {
