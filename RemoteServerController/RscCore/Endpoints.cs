@@ -30,6 +30,7 @@ namespace RscCore
     // Project namespaces
     using RscConfig;
     using RscLog;
+    using System.Text;
 
     /// <summary>
     /// Static class provides static function construction various WCF endpoints.
@@ -46,6 +47,7 @@ namespace RscCore
         /// <returns>New HTTP endpoint</returns>
         public static WebServiceHost GetRESTHost()
         {
+            Log.Debug("Going to create REST HTTP endpoint.");
             // The new host
             WebServiceHost restHost = null;
             try
@@ -55,6 +57,9 @@ namespace RscCore
                     Configurator.Settings.Network.Host,
                     Configurator.Settings.Network.Port,
                     typeof(RESTController).Name));
+                Log.Debug("URI<{0}>", uri.ToString());
+                // Try to unbind SSL from port
+                UnbindSSLFromPort();
                 // Create host
                 restHost = new WebServiceHost(typeof(RESTController));
                 // No security
@@ -88,6 +93,7 @@ namespace RscCore
         /// <returns>New HTTPS endpoint</returns>
         public static WebServiceHost GetRESTHostSSL()
         {
+            Log.Debug("Going to create REST HTTPS endpoint.");
             // The new host
             WebServiceHost restHost = null;
             try
@@ -97,6 +103,7 @@ namespace RscCore
                     Configurator.Settings.Network.Host,
                     Configurator.Settings.Network.Port,
                     typeof(RESTController).Name));
+                Log.Debug("URI<{0}>", uri.ToString());
                 // Bind SSL to configured port
                 if (RebindSSLToPort())
                 {
@@ -135,31 +142,8 @@ namespace RscCore
         /// <returns>True if port was binded, false otherwise.</returns>
         private static bool RebindSSLToPort()
         {
-            bool portBinded = false;
-            if (BindSSLToPort() != 0)
-            {
-                Log.Info("Port<{0}> already used. Trying to free it.", Configurator.Settings.Network.Port);
-                if (UnbindSSLFromPort() == 0)
-                {
-                    if (BindSSLToPort() != 0)
-                    {
-                        Log.Error("Binding SSL to port<{0}> failed.", Configurator.Settings.Network.Port);
-                    }
-                    else
-                    {
-                        portBinded = true;
-                    }
-                }
-                else
-                {
-                    Log.Error("Cannot free port<{0}>.", Configurator.Settings.Network.Port);
-                }
-            }
-            else
-            {
-                portBinded = true;
-            }
-            return portBinded;
+            UnbindSSLFromPort();
+            return BindSSLToPort();
         }
 
         /// <summary>
@@ -168,33 +152,23 @@ namespace RscCore
         /// See documentation for details about configuration of personal certificates.
         /// NOT TESTED WITH WINDOWS XP OR WINDOWS SERVER 2003 AND OLDER!
         /// </summary>
-        private static int BindSSLToPort()
+        /// <returns>True if binded correctly.</returns>
+        private static bool BindSSLToPort()
         {
-            try
+            string command = string.Format(@"http add sslcert ipport=0.0.0.0:{0} certhash={1} appid={{{2}}}",
+                Configurator.Settings.Network.Port,
+                Configurator.Settings.Network.CertificateThumbprint,
+                Assembly.GetExecutingAssembly().GetType().GUID.ToString(),
+                Environment.UserDomainName,
+                Environment.UserName);
+
+            if (ExecuteNetsh(command) == 0)
             {
-                string command = string.Format(@" http add sslcert ipport=0.0.0.0:{0} certhash={1} appid={{{2}}}",
-                    Configurator.Settings.Network.Port,
-                    Configurator.Settings.Network.CertificateThumbprint,
-                    Assembly.GetExecutingAssembly().GetType().GUID.ToString(),
-                    Environment.UserDomainName,
-                    Environment.UserName);
-                Process bindSSLToPort = new Process();
-                bindSSLToPort.StartInfo.FileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "netsh.exe");
-                bindSSLToPort.StartInfo.Arguments = command;
-                bindSSLToPort.Start();
-                bindSSLToPort.WaitForExit(Constants.GeneralTimeout);
-                if (bindSSLToPort.ExitCode != 0)
-                {
-                    Log.Warning("Could not bind port<{0} using this command<{1}>",
-                        Configurator.Settings.Network.Port,
-                        command);
-                }
-                return bindSSLToPort.ExitCode;
+                return true;
             }
-            catch (Exception ex)
+            else
             {
-                Log.Error(ex, "Could not bind SSL to port");
-                return -1;
+                return false;
             }
         }
 
@@ -203,28 +177,51 @@ namespace RscCore
         /// See documentation for details about configuration of personal certificates.
         /// NOT TESTED WITH WINDOWS XP OR WINDOWS SERVER 2003 AND OLDER!
         /// </summary>
-        private static int UnbindSSLFromPort()
+        /// <returns>True if unbind correctly. False if could not unbind it or if the port is not bind at all.</returns>
+        private static bool UnbindSSLFromPort()
+        {
+            string command = string.Format(@"http delete sslcert ipport=0.0.0.0:{0}",
+                Configurator.Settings.Network.Port);
+
+            if (ExecuteNetsh(command) == 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        /// <summary>
+        /// Execute netssh tool with given command. Use general timeout as configured.
+        /// NOT TESTED WITH WINDOWS XP OR WINDOWS SERVER 2003 AND OLDER!
+        /// </summary>
+        private static int ExecuteNetsh(string command)
         {
             try
             {
-                string command = string.Format(@" http delete sslcert ipport=0.0.0.0:{0}",
-                    Configurator.Settings.Network.Port);
-                Process unbindSSLFromPort = new Process();
-                unbindSSLFromPort.StartInfo.FileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.SystemX86), "netsh.exe");
-                unbindSSLFromPort.StartInfo.Arguments = command;
-                unbindSSLFromPort.Start();
-                unbindSSLFromPort.WaitForExit(Constants.GeneralTimeout);
-                if (unbindSSLFromPort.ExitCode != 0)
+                Log.Debug("Going to execute this command: <netsh {0}>", command);
+                Process netsh = new Process();
+                netsh.StartInfo.FileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.SystemX86), "netsh.exe");
+                netsh.StartInfo.Arguments = command;
+                netsh.StartInfo.RedirectStandardOutput = true;
+                netsh.StartInfo.RedirectStandardError = true;
+                netsh.StartInfo.UseShellExecute = false;
+                netsh.Start();
+                StringBuilder sb = new StringBuilder();
+                while (!netsh.StandardOutput.EndOfStream)
                 {
-                    Log.Warning("Could not free port<{0} using this command<{1}>",
-                        Configurator.Settings.Network.Port,
-                        command);
+                    sb.Append(netsh.StandardOutput.ReadLine());
+                    sb.Append(" | ");
+                    // do something with line
                 }
-                return unbindSSLFromPort.ExitCode;
+                netsh.WaitForExit(Constants.GeneralTimeout);
+                Log.Debug("Command output: {0}", sb.ToString());
+                return netsh.ExitCode;
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Could not unbind SSL from port");
+                Log.Error(ex, "Could not unbind SSL from port.");
                 return -1;
             }
         }

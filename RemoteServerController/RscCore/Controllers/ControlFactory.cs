@@ -53,7 +53,7 @@ namespace RscCore.Controllers
             }
             else
             {
-                Log.Warning("Processing of service<{0}> is not allowed!", serviceName);
+                Log.Alert("Processing of service<{0}> is not allowed!", serviceName);
             }
             // --- Allow Start (service may be started)
             service.GetType().GetField("allowStart", BindingFlags.NonPublic | BindingFlags.Instance)

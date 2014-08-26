@@ -38,6 +38,14 @@ namespace RscHost
         /// </summary>
         static void Main(string[] args)
         {
+            // Init logger
+            RscLog.Log.Init(RscLog.Log.Logger.Log4Net, Constants.AppName);
+            RscLog.Log.Info(String.Empty);
+            RscLog.Log.Info("------------------------------------------------------------------------------------------");
+            RscLog.Log.Info("Started on {0} {1}", DateTime.Now.ToLongDateString(), DateTime.Now.ToLongTimeString());
+            RscLog.Log.Info("------------------------------------------------------------------------------------------");
+            RscLog.Log.Info(String.Empty);
+
             // Create the service
             var service = new RscService();
 

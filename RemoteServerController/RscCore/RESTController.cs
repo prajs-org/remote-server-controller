@@ -24,6 +24,7 @@ namespace RscCore
     // Project namespaces
     using RscInterface;
     using RscCore.Controllers;
+    using RscLog;
 
     /// <summary>
     /// Implementation of REST controller.
@@ -33,18 +34,23 @@ namespace RscCore
     /// </summary>
     public class RESTController : IRESTController
     {
+        const string logMessage = "Incoming request<{0}> for service<{1}>.";
+
         public ServiceStatus ServiceStatusJSON(string serviceName)
         {
+            Log.Debug(logMessage, "SERVICE STATUS", serviceName);
             return ControlFactory.GetService(serviceName).GetStatus();
         }
 
         public ServiceActionResult ServiceStartJSON(string serviceName)
         {
+            Log.Debug(logMessage, "START SERVICE", serviceName);
             return ControlFactory.GetService(serviceName).Start();
         }
 
         public ServiceActionResult ServiceStopJSON(string serviceName)
         {
+            Log.Debug(logMessage, "STOP SERVICE", serviceName);
             return ControlFactory.GetService(serviceName).Stop();
         }
     }
