@@ -55,11 +55,18 @@ namespace RscConfig
             get { return (Network)this["Network"]; }
         }
 
-        [ConfigurationProperty("Services", IsRequired = false)]
+        [ConfigurationProperty("Services", IsRequired = true)]
         public Services Services
         {
             set { this["Services"] = value; }
             get { return (Services)this["Services"]; }
+        }
+
+        [ConfigurationProperty("Security", IsRequired = true)]
+        public Security Security
+        {
+            set { this["Security"] = value; }
+            get { return (Security)this["Security"]; }
         }
     }
     #endregion
@@ -198,6 +205,117 @@ namespace RscConfig
         {
             get { return (bool)base["AllowStatusCheck"]; }
             set { base["AllowStop"] = value; }
+        }
+    }
+
+    #endregion
+
+    #region Security
+
+    public class Security : ConfigurationElement
+    {
+        [ConfigurationProperty("CheckAPIKey", DefaultValue = "false", IsRequired = true)]
+        public bool CheckAPIKey
+        {
+            set { this["CheckAPIKey"] = value; }
+            get { return (bool)this["CheckAPIKey"]; }
+        }
+
+        [ConfigurationProperty("CheckIPAddress", DefaultValue = "false", IsRequired = true)]
+        public bool CheckIPAddress
+        {
+            set { this["CheckIPAddress"] = value; }
+            get { return (bool)this["CheckIPAddress"]; }
+        }
+
+        [ConfigurationProperty("AllowedAPIKeyCollection", IsRequired = true)]
+        public AllowedAPIKeyCollection AllowedAPIKeys
+        {
+            get { return (AllowedAPIKeyCollection)this["AllowedAPIKeyCollection"]; }
+            set { this["AllowedAPIKeyCollection"] = value; }
+        }
+
+        [ConfigurationProperty("AllowedIPAddressCollection", IsRequired = true)]
+        public AllowedIPAddressCollection AllowedIPAddresses
+        {
+            get { return (AllowedIPAddressCollection)this["AllowedIPAddressCollection"]; }
+            set { this["AllowedIPAddressCollection"] = value; }
+        }
+    }
+
+    public class AllowedAPIKeyCollection : ConfigurationElementCollection
+    {
+        protected override ConfigurationElement CreateNewElement()
+        {
+            return new AddAPIKey();
+        }
+
+        protected override object GetElementKey(ConfigurationElement apiKey)
+        {
+            return ((AddAPIKey)apiKey).Value;
+        }
+
+        public bool GetAPIKey(string apiKey, out AddAPIKey outApiKey)
+        {
+            foreach (var item in Configurator.Settings.Security.AllowedAPIKeys)
+            {
+                AddAPIKey key = (AddAPIKey)item;
+                if (apiKey == key.Value)
+                {
+                    outApiKey = key;
+                    return true;
+                }
+            }
+            outApiKey = null;
+            return false;
+        }
+    }
+
+    public class AddAPIKey : ConfigurationElement
+    {
+        [ConfigurationProperty("Value", IsKey = true, IsRequired = true)]
+        public string Value
+        {
+            get { return (string)base["Value"]; }
+            set { base["Value"] = value; }
+        }
+    }
+
+    public class AllowedIPAddressCollection : ConfigurationElementCollection
+    {
+        protected override ConfigurationElement CreateNewElement()
+        {
+            return new AddIPAddress();
+        }
+
+        protected override object GetElementKey(ConfigurationElement apiKey)
+        {
+            return ((AddIPAddress)apiKey).Value;
+        }
+
+        public bool GetAPIKey(string ipAddress, out AddIPAddress outIpAddress)
+        {
+            foreach (var item in Configurator.Settings.Security.AllowedIPAddresses)
+            {
+                AddIPAddress ip = (AddIPAddress)item;
+                if (ipAddress == ip.Value)
+                {
+                    outIpAddress = ip;
+                    return true;
+                }
+            }
+            outIpAddress = null;
+            return false;
+        }
+    }
+
+    public class AddIPAddress : ConfigurationElement
+    {
+        [ConfigurationProperty("Value", IsKey = true, IsRequired = true)]
+        public string Value
+        {
+            get { return (string)base["Value"]; }
+            set { base["Value"] = value; }
         }
     }
 

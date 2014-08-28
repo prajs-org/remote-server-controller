@@ -34,9 +34,9 @@ namespace RscInterface
         /// </summary>
         /// <param name="serviceName">Service name</param>
         /// <returns>Object with information about current status and result of this action.</returns>
-        [WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "JSON/Service/Status/{serviceName}")]
+        [WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "JSON/Service/Status/{serviceName}?apiKey={apiKey}")]
         [OperationContract]
-        ServiceStatus ServiceStatusJSON(string serviceName);
+        ServiceStatus ServiceStatusJSON(string serviceName, string apiKey);
         /// <summary>
         /// Try to start service of given name.
         /// Success is not guaranteed.
@@ -45,9 +45,9 @@ namespace RscInterface
         /// </summary>
         /// <param name="serviceName">Service name</param>
         /// <returns>Object with information about result of this action.</returns>
-        [WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "JSON/Service/Start/{serviceName}")]
+        [WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "JSON/Service/Start/{serviceName}?apiKey={apiKey}")]
         [OperationContract]
-        ServiceActionResult ServiceStartJSON(string serviceName);
+        ServiceActionResult ServiceStartJSON(string serviceName, string apiKey);
         /// <summary>
         /// Try to stop service of given name.
         /// Success is not guaranteed.
@@ -56,8 +56,8 @@ namespace RscInterface
         /// </summary>
         /// <param name="serviceName">Service name</param>
         /// <returns>Object with information about result of this action.</returns>
-        [WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "JSON/Service/Stop/{serviceName}")]
+        [WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "JSON/Service/Stop/{serviceName}?apiKey={apiKey}")]
         [OperationContract]
-        ServiceActionResult ServiceStopJSON(string serviceName);
+        ServiceActionResult ServiceStopJSON(string serviceName, string apiKey);
     }
 }

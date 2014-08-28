@@ -57,6 +57,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RESTController.cs" />
     <Compile Include="Controllers\Service.cs" />
+    <Compile Include="Security\APIKeyManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RscConfig\RscConfig.csproj">
@@ -80,7 +81,7 @@
           <AutoStart>True</AutoStart>
         </WcfProjectProperties>
       </FlavorProperties>
-      <UserProperties BuildVersion_BuildAction="ReBuild" BuildVersion_ConfigurationName="Release" BuildVersion_UseGlobalSettings="True" />
+      <UserProperties BuildVersion_UseGlobalSettings="True" BuildVersion_ConfigurationName="Release" BuildVersion_BuildAction="ReBuild" />
     </VisualStudio>
   </ProjectExtensions>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
