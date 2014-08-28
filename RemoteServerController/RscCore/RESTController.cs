@@ -36,22 +36,22 @@ namespace RscCore
     {
         const string logMessage = "Incoming request<{0}> for service<{1}>.";
 
-        public ServiceStatus ServiceStatusJSON(string serviceName)
+        public ServiceStatus ServiceStatusJSON(string serviceName, string apiKey)
         {
             Log.Debug(logMessage, "SERVICE STATUS", serviceName);
-            return ControlFactory.GetService(serviceName).GetStatus();
+            return ControlFactory.GetService(serviceName, apiKey).GetStatus();
         }
 
-        public ServiceActionResult ServiceStartJSON(string serviceName)
+        public ServiceActionResult ServiceStartJSON(string serviceName, string apiKey)
         {
             Log.Debug(logMessage, "START SERVICE", serviceName);
-            return ControlFactory.GetService(serviceName).Start();
+            return ControlFactory.GetService(serviceName, apiKey).Start();
         }
 
-        public ServiceActionResult ServiceStopJSON(string serviceName)
+        public ServiceActionResult ServiceStopJSON(string serviceName, string apiKey)
         {
             Log.Debug(logMessage, "STOP SERVICE", serviceName);
-            return ControlFactory.GetService(serviceName).Stop();
+            return ControlFactory.GetService(serviceName, apiKey).Stop();
         }
     }
 }
