@@ -13,9 +13,9 @@ namespace RscLog
         void Alert(string message, params object[] args);
         void Error(string message, params object[] args);
         // Audit logs
-        void AuditIncoming(string message, params object[] args);
-        void AuditSuccess(string message, params object[] args);
-        void AuditFailed(string message, params object[] args);
+        void AuditIncoming(string apiKey, string message, params object[] args);
+        void AuditSuccess(string apiKey, string message, params object[] args);
+        void AuditFailed(string apiKey, string message, params object[] args);
         // Exception logs
         void Debug(Exception exception, string comment);
         void Info(Exception exception, string comment);

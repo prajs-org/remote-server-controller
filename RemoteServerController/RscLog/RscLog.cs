@@ -72,19 +72,19 @@ namespace RscLog
 
         // -- Audits
 
-        public static void AuditIncoming(string message, params object[] args)
+        public static void AuditIncoming(string apiKey, string message, params object[] args)
         {
-            logger.AuditIncoming(message, args);
+            logger.AuditIncoming(apiKey, message, args);
         }
 
-        public static void AuditSuccess(string message, params object[] args)
+        public static void AuditSuccess(string apiKey, string message, params object[] args)
         {
-            logger.AuditSuccess(message, args);
+            logger.AuditSuccess(apiKey, message, args);
         }
 
-        public static void AuditFailed(string message, params object[] args)
+        public static void AuditFailed(string apiKey, string message, params object[] args)
         {
-            logger.AuditFailed(message, args);
+            logger.AuditFailed(apiKey, message, args);
         }
 
         // -- Exceptions

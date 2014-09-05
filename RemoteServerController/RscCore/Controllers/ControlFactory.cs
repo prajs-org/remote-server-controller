@@ -119,7 +119,7 @@ namespace RscCore.Controllers
         /// </summary>
         /// <param name="serviceName">Full path to file</param>
         /// <returns>Instance of FileManager or null if file is not specified in configuration file.</returns>
-        public static FileManager GetFile(string fullPath, string apiKey)
+        public static FileManager GetFile(string fileAlias, string apiKey)
         {
             // This object will be returned if all succeeded
             FileManager fileManager = null;
@@ -136,13 +136,13 @@ namespace RscCore.Controllers
             try
             {
                 // Prepare object with no permissions
-                fileManager = new FileManager(fullPath);
+                fileManager = new FileManager(fileAlias);
 
                 // Load configuration of file from configuration file
-                if (false == Configurator.Settings.Files.AllowedFiles.GetFile(fullPath, out fileConfiguration))
+                if (false == Configurator.Settings.Files.AllowedFiles.GetFile(fileAlias, out fileConfiguration))
                 {
                     // File is not configured and cannot be processed
-                    RscLog.AuditFailed("Processing of file<{0}> is not allowed because it is not configured!", fullPath);
+                    RscLog.AuditFailed("Processing of file<{0}> is not allowed because it is not configured!", fileAlias);
                     forbidAll = true;
                 }
                 // Check API Key -- TODO: refactor this as separate function (reusable)
@@ -151,7 +151,7 @@ namespace RscCore.Controllers
                     if (false == APIKeyManager.Instance().IsValidAPIKey(apiKey))
                     {
                         // Given API Key is not valid, request cannot be processed
-                        RscLog.AuditFailed("Processing of file<{0}> is not allowed because of invalid APIKey<{1}>!", fullPath, apiKey);
+                        RscLog.AuditFailed("Processing of file<{0}> is not allowed because of invalid APIKey<{1}>!", fileAlias, apiKey);
                         forbidAll = true;
                     }
                 }
@@ -161,7 +161,7 @@ namespace RscCore.Controllers
                 forbidAll = true;
                 var message = "Permissions could not been processed correctly. Forbidding all permissions.";
                 RscLog.Alert(ex, message);
-                RscLog.AuditFailed(message);
+                RscLog.AuditFailed(apiKey, message);
             }
 
             // ---------------------------------------------------------
