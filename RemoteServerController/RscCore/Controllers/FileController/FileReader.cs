@@ -138,7 +138,8 @@ namespace RscCore.Controllers.FileController
                     {
                         // Read file
                         char[] buffer = new char[length];
-                        var i = sr.ReadBlock(buffer, start, length);
+                        sr.BaseStream.Position = start;
+                        sr.ReadBlock(buffer, 0, length);
                         content = new string(buffer);
                         return ReturnCodes.ActionReturnCode.OK;
                     }
