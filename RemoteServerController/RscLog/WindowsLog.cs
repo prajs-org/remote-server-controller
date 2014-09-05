@@ -28,7 +28,7 @@ namespace RscLog
     /// <summary>
     /// Default Windows logger.
     /// </summary>
-    public class WindowsLog : ILog
+    public class WindowsLog : IRscLog
     {
         #region Construction - singleton
 
@@ -90,6 +90,21 @@ namespace RscLog
         public void Error(Exception exception, string comment)
         {
             WriteException(EventLogEntryType.Error, exception, comment);
+        }
+
+        public void AuditIncoming(string message, params object[] args)
+        {
+            WriteLog(EventLogEntryType.Information, message, args);
+        }
+
+        public void AuditSuccess(string message, params object[] args)
+        {
+            WriteLog(EventLogEntryType.Information, message, args);
+        }
+
+        public void AuditFailed(string message, params object[] args)
+        {
+            WriteLog(EventLogEntryType.Warning, message, args);
         }
 
         #endregion

@@ -26,6 +26,8 @@ namespace RscCore.Controllers
     using RscConfig;
     using RscLog;
     using RscCore.Security;
+    using RscCore.Controllers.FileController;
+    using RscCore.Controllers.ServiceController;
 
     /// <summary>
     /// Static class designated for secure construction of controller objects.
@@ -40,11 +42,11 @@ namespace RscCore.Controllers
         /// Object may be created only if it is configured as allowed service in configuration file.
         /// </summary>
         /// <param name="serviceName">Name of service</param>
-        /// <returns>Instance of Service or null if service is not specified in configuration file.</returns>
-        public static Service GetService(string serviceName, string apiKey)
+        /// <returns>Instance of ServiceManager or null if service is not specified in configuration file.</returns>
+        public static ServiceManager GetService(string serviceName, string apiKey)
         {
             // This object will be returned if all succeeded
-            Service service = null;
+            ServiceManager service = null;
             // Configuration of service
             AddService serviceConfiguration = null;
             // If this variable is set to TRUE, no permissions will be set.
@@ -58,22 +60,22 @@ namespace RscCore.Controllers
             try
             {
                 // Prepare object with no permissions
-                service = new Service(serviceName);
+                service = new ServiceManager(serviceName);
 
                 // Load configuration of service from configuration file
                 if (false == Configurator.Settings.Services.AllowedServices.GetService(serviceName, out serviceConfiguration))
                 {
                     // Service is not configured and cannot be processed
-                    Log.Alert("Processing of service<{0}> is not allowed because it is not configured!", serviceName);
+                    RscLog.Alert("Processing of service<{0}> is not allowed because it is not configured!", serviceName);
                     forbidAll = true;
                 }
-                // Check API Key
+                // Check API Key -- TODO: refactor this as separate function (reusable)
                 else if (Configurator.Settings.Security.CheckAPIKey)
                 {
                     if (false == APIKeyManager.Instance().IsValidAPIKey(apiKey))
                     {
                         // Given API Key is not valid, request cannot be processed
-                        Log.Alert("Processing of service<{0}> is not allowed because of invalid APIKey<{1}>!", serviceName, apiKey);
+                        RscLog.Alert("Processing of service<{0}> is not allowed because of invalid APIKey<{1}>!", serviceName, apiKey);
                         forbidAll = true;
                     }
                 }
@@ -81,7 +83,7 @@ namespace RscCore.Controllers
             catch (Exception ex)
             {
                 forbidAll = true;
-                Log.Alert(ex, "Permissions could not been processed correctly. Forbidding all permissions.");
+                RscLog.Alert(ex, "Permissions could not been processed correctly. Forbidding all permissions.");
             }
 
             // ---------------------------------------------------------
@@ -108,6 +110,76 @@ namespace RscCore.Controllers
             }
             
             return service;
+        }
+
+
+        /// <summary>
+        /// Create instance of file with configured permissions. The permissions are read-only in final object.
+        /// Object may be created only if it is configured as allowed file in configuration file.
+        /// </summary>
+        /// <param name="serviceName">Full path to file</param>
+        /// <returns>Instance of FileManager or null if file is not specified in configuration file.</returns>
+        public static FileManager GetFile(string fullPath, string apiKey)
+        {
+            // This object will be returned if all succeeded
+            FileManager fileManager = null;
+            // Configuration of file
+            AddFile fileConfiguration = null;
+            // If this variable is set to TRUE, no permissions will be set.
+            bool forbidAll = false;
+
+            // ---------------------------------------------------------
+            // SECURITY NOTICE:
+            // All mandatory checks (like API key, IP address...) should be done within following
+            // try-catch block. If anything fail, the forbidAll flag has to be set to TRUE.
+
+            try
+            {
+                // Prepare object with no permissions
+                fileManager = new FileManager(fullPath);
+
+                // Load configuration of file from configuration file
+                if (false == Configurator.Settings.Files.AllowedFiles.GetFile(fullPath, out fileConfiguration))
+                {
+                    // File is not configured and cannot be processed
+                    RscLog.AuditFailed("Processing of file<{0}> is not allowed because it is not configured!", fullPath);
+                    forbidAll = true;
+                }
+                // Check API Key -- TODO: refactor this as separate function (reusable)
+                else if (Configurator.Settings.Security.CheckAPIKey)
+                {
+                    if (false == APIKeyManager.Instance().IsValidAPIKey(apiKey))
+                    {
+                        // Given API Key is not valid, request cannot be processed
+                        RscLog.AuditFailed("Processing of file<{0}> is not allowed because of invalid APIKey<{1}>!", fullPath, apiKey);
+                        forbidAll = true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                forbidAll = true;
+                var message = "Permissions could not been processed correctly. Forbidding all permissions.";
+                RscLog.Alert(ex, message);
+                RscLog.AuditFailed(message);
+            }
+
+            // ---------------------------------------------------------
+            // SECURITY NOTICE:
+            // The forbidAll flag is set now, so if it is still FALSE, you can start to allow some permissions.
+            // Put your own checks inside the following if block.
+
+            if (fileManager != null && fileConfiguration != null && forbidAll == false)
+            {
+
+                /*** HERE YOU CAN START TO ALLOWING COMMON PERMISSIONS ***/
+
+                // --- Allow Start (service may be started)
+                fileManager.GetType().GetField("allowStart", BindingFlags.NonPublic | BindingFlags.Instance)
+                    .SetValue(fileManager, fileConfiguration.AllowRead);
+            }
+
+            return fileManager;
         }
     }
 }

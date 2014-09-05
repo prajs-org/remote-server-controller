@@ -47,7 +47,7 @@ namespace RscCore
         /// <returns>New HTTP endpoint</returns>
         public static WebServiceHost GetRESTHost()
         {
-            Log.Debug("Going to create REST HTTP endpoint.");
+            RscLog.Debug("Going to create REST HTTP endpoint.");
             // The new host
             WebServiceHost restHost = null;
             try
@@ -57,7 +57,7 @@ namespace RscCore
                     Configurator.Settings.Network.Host,
                     Configurator.Settings.Network.Port,
                     typeof(RESTController).Name));
-                Log.Debug("URI<{0}>", uri.ToString());
+                RscLog.Debug("URI<{0}>", uri.ToString());
                 // Try to unbind SSL from port
                 UnbindSSLFromPort();
                 // Create host
@@ -76,7 +76,7 @@ namespace RscCore
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Could not create REST/HTTP host");
+                RscLog.Error(ex, "Could not create REST/HTTP host");
                 restHost = null;
             }
             return restHost;
@@ -93,7 +93,7 @@ namespace RscCore
         /// <returns>New HTTPS endpoint</returns>
         public static WebServiceHost GetRESTHostSSL()
         {
-            Log.Debug("Going to create REST HTTPS endpoint.");
+            RscLog.Debug("Going to create REST HTTPS endpoint.");
             // The new host
             WebServiceHost restHost = null;
             try
@@ -103,7 +103,7 @@ namespace RscCore
                     Configurator.Settings.Network.Host,
                     Configurator.Settings.Network.Port,
                     typeof(RESTController).Name));
-                Log.Debug("URI<{0}>", uri.ToString());
+                RscLog.Debug("URI<{0}>", uri.ToString());
                 // Bind SSL to configured port
                 if (RebindSSLToPort())
                 {
@@ -128,7 +128,7 @@ namespace RscCore
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Could not create REST/HTTPS host");
+                RscLog.Error(ex, "Could not create REST/HTTPS host");
                 restHost = null;
             }
             return restHost;
@@ -200,7 +200,7 @@ namespace RscCore
         {
             try
             {
-                Log.Debug("Going to execute this command: <netsh {0}>", command);
+                RscLog.Debug("Going to execute this command: <netsh {0}>", command);
                 Process netsh = new Process();
                 netsh.StartInfo.FileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.SystemX86), "netsh.exe");
                 netsh.StartInfo.Arguments = command;
@@ -216,12 +216,12 @@ namespace RscCore
                     // do something with line
                 }
                 netsh.WaitForExit(Constants.GeneralTimeout);
-                Log.Debug("Command output: {0}", sb.ToString());
+                RscLog.Debug("Command output: {0}", sb.ToString());
                 return netsh.ExitCode;
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Could not unbind SSL from port.");
+                RscLog.Error(ex, "Could not unbind SSL from port.");
                 return -1;
             }
         }

@@ -7,7 +7,7 @@ using System.Text;
 
 namespace RscLog
 {
-    public static class Log
+    public static class RscLog
     {
         /// <summary>
         /// Logger type.
@@ -16,7 +16,7 @@ namespace RscLog
         /// <summary>
         /// Instance of logger.
         /// </summary>
-        private static ILog logger;
+        private static IRscLog logger;
         /// <summary>
         /// Init logger with given log system.
         /// </summary>
@@ -38,10 +38,12 @@ namespace RscLog
         /// <summary>
         /// Default constructor if Init not executed.
         /// </summary>
-        static Log()
+        static RscLog()
         {
             Init(Logger.Windows, RscConfig.Constants.AppName);
         }
+
+        // -- Standard logs
 
         public static void Debug(string message, params object[] args)
         {
@@ -67,6 +69,25 @@ namespace RscLog
         {
             logger.Debug(exception, comment);
         }
+
+        // -- Audits
+
+        public static void AuditIncoming(string message, params object[] args)
+        {
+            logger.AuditIncoming(message, args);
+        }
+
+        public static void AuditSuccess(string message, params object[] args)
+        {
+            logger.AuditSuccess(message, args);
+        }
+
+        public static void AuditFailed(string message, params object[] args)
+        {
+            logger.AuditFailed(message, args);
+        }
+
+        // -- Exceptions
 
         public static void Info(Exception exception, string comment)
         {

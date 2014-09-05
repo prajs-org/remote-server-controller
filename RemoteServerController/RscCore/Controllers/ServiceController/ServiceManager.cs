@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License          *
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.      *
  ******************************************************************************/
-namespace RscCore.Controllers
+namespace RscCore.Controllers.ServiceController
 {
     // System namespaces
     using System;
@@ -30,17 +30,17 @@ namespace RscCore.Controllers
 
     /// <summary>
     /// Controller class designated for controlling of Windows Managed Services.
-    /// Each object of class Service can handle single Windows Managed Service.
+    /// Each object of class ServiceManager can handle single Windows Managed ServiceManager.
     /// </summary>
-    public class Service
+    public sealed class ServiceManager
     {
         #region Construction
 
         /// <summary>
-        /// Create instance of Service class. Instance can be created only by ControlFactory. If you create it directly, all permissions will be set to false.
+        /// Create instance of ServiceManager class. Instance can be created only by ControlFactory. If you create it directly, all permissions will be set to false.
         /// </summary>
         /// <param name="serviceName">Name of service.</param>
-        public Service(string serviceName)
+        public ServiceManager(string serviceName)
         {
             this.Name = serviceName;
         }
@@ -115,7 +115,7 @@ namespace RscCore.Controllers
             }
             else
             {
-                Log.Alert("Service<{0}> is not allowed to be started!", this.Name);
+                RscLog.AuditFailed("Service<{0}> is not allowed to be started!", this.Name);
                 if (this.AllowStatusCheck)
                 {
                     return new ServiceActionResult(this.Name, this.GetStatusToken(), ReturnCodes.ActionReturnCode.NotAllowed);
@@ -139,7 +139,7 @@ namespace RscCore.Controllers
             }
             else
             {
-                Log.Alert("Service<{0}> is not allowed to be stopped!", this.Name);
+                RscLog.AuditFailed("Service<{0}> is not allowed to be stopped!", this.Name);
                 if (this.AllowStatusCheck)
                 {
                     return new ServiceActionResult(this.Name, this.GetStatusToken(), ReturnCodes.ActionReturnCode.NotAllowed);
@@ -163,7 +163,7 @@ namespace RscCore.Controllers
             }
             else
             {
-                Log.Alert("Check of status of service<{0}> is not allowed!", this.Name);
+                RscLog.AuditFailed("Check of status of service<{0}> is not allowed!", this.Name);
                 return new ServiceStatus(this.Name, null, ReturnCodes.ActionReturnCode.NotAllowed);
             }
         }
@@ -214,7 +214,7 @@ namespace RscCore.Controllers
                 if (!allowedCurrentStatuses.Contains(currentStatus.Value))
                 {
                     error_code = ReturnCodes.ActionReturnCode.UnmetRequirements;
-                    Log.Alert("Status of service<{0}> cannot be changed to<{1}> because current currentStatus<{2}> is not in allowed statuses.",
+                    RscLog.Alert("Status of service<{0}> cannot be changed to<{1}> because current currentStatus<{2}> is not in allowed statuses.",
                         this.Name,
                         newStatus,
                         currentStatus);
@@ -238,7 +238,7 @@ namespace RscCore.Controllers
                                     service.Pause();
                                     break;
                                 default:
-                                    Log.Error("Status of service<{0}> cannot be changed because new status<{1}> is not supported.",
+                                    RscLog.Error("Status of service<{0}> cannot be changed because new status<{1}> is not supported.",
                                         this.Name,
                                         newStatus);
                                     error_code = ReturnCodes.ActionReturnCode.NotSupported;
@@ -250,12 +250,12 @@ namespace RscCore.Controllers
                         catch (System.ServiceProcess.TimeoutException)
                         {
                             error_code = ReturnCodes.ActionReturnCode.Timeout;
-                            Log.Alert("Change of status of service<{0}> failed on timeout.", this.Name);
+                            RscLog.Alert("Change of status of service<{0}> failed on timeout.", this.Name);
                         }
                         catch (Exception ex)
                         {
                             error_code = ReturnCodes.ActionReturnCode.UnknownError;
-                            Log.Error(ex, "Change of status failed.");
+                            RscLog.Error(ex, "Change of status failed.");
                         }
                     }
                 }
@@ -263,7 +263,7 @@ namespace RscCore.Controllers
             else
             {
                 error_code = ReturnCodes.ActionReturnCode.UnmetRequirements;
-                Log.Error("Status of service<{0}> cannot be changed because current status cannot be determined.", this.Name);
+                RscLog.Error("Status of service<{0}> cannot be changed because current status cannot be determined.", this.Name);
             }
             return new ServiceActionResult(this.Name, currentStatus, error_code);
         }

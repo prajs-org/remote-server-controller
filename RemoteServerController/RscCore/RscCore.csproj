@@ -51,12 +51,14 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AuthorizationManager.cs" />
+    <Compile Include="Security\AuthorizationManager.cs" />
     <Compile Include="Controllers\ControlFactory.cs" />
+    <Compile Include="Controllers\FileController\FileManager.cs" />
+    <Compile Include="Controllers\FileController\FileReader.cs" />
     <Compile Include="Endpoints.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RESTController.cs" />
-    <Compile Include="Controllers\Service.cs" />
+    <Compile Include="Controllers\ServiceController\ServiceManager.cs" />
     <Compile Include="Security\APIKeyManager.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -81,7 +83,7 @@
           <AutoStart>True</AutoStart>
         </WcfProjectProperties>
       </FlavorProperties>
-      <UserProperties BuildVersion_UseGlobalSettings="True" BuildVersion_ConfigurationName="Release" BuildVersion_BuildAction="ReBuild" />
+      <UserProperties BuildVersion_BuildAction="ReBuild" BuildVersion_ConfigurationName="Release" BuildVersion_UseGlobalSettings="True" />
     </VisualStudio>
   </ProjectExtensions>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

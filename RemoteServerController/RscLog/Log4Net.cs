@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace RscLog
 {
-    public class Log4NetWrapper : ILog
+    public class Log4NetWrapper : IRscLog
     {
         #region Construction - singleton
 
@@ -17,17 +17,21 @@ namespace RscLog
         /// </summary>
         static Log4NetWrapper wrapper = null;
         /// <summary>
-        /// Instance of Log4Net logger.
+        /// Instance of basic logger.
         /// </summary>
-        ILogger log4net;
+        ILog logAppender;
+        /// <summary>
+        /// Instance of audit logger.
+        /// </summary>
+        ILog auditAppender;
         /// <summary>
         /// Private constructor. Use function Instance to get instance of this class.
         /// </summary>
         /// <param name="appName">Name of logger</param>
         private Log4NetWrapper(string appName)
         {
-            //log4net = LoggerManager.GetLogger(Assembly.GetExecutingAssembly(), appName);
-            log4net = LoggerManager.GetLogger(Assembly.GetCallingAssembly(), MethodBase.GetCurrentMethod().DeclaringType);
+            logAppender = LogManager.GetLogger("LogAppender");
+            auditAppender = LogManager.GetLogger("AuditAppender");
         }
         /// <summary>
         /// Get instance of log4net wrapper.
@@ -89,12 +93,27 @@ namespace RscLog
 
         private void logMessage(Level level, string message, params object[] args)
         {
-            log4net.Log(typeof(Log4NetWrapper), level, String.Format(message, args), null);
+            logAppender.Logger.Log(typeof(Log4NetWrapper), level, String.Format(message, args), null);
         }
 
         private void logException(Level level, string message, Exception exception)
         {
-            log4net.Log(typeof(Log4NetWrapper), level, message, exception);
+            logAppender.Logger.Log(typeof(Log4NetWrapper), level, message, exception);
+        }
+
+        public void AuditIncoming(string message, params object[] args)
+        {
+            auditAppender.Logger.Log(typeof(Log4NetWrapper), Level.Info, String.Format(message, args), null);
+        }
+
+        public void AuditSuccess(string message, params object[] args)
+        {
+            auditAppender.Logger.Log(typeof(Log4NetWrapper), Level.Info, String.Format(message, args), null);
+        }
+
+        public void AuditFailed(string message, params object[] args)
+        {
+            auditAppender.Logger.Log(typeof(Log4NetWrapper), Level.Warn, String.Format(message, args), null);
         }
 
         #endregion
