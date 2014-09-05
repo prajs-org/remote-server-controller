@@ -23,6 +23,7 @@ namespace RscCore.Controllers.FileController
     using System.Linq;
     using System.ServiceProcess;
     using System.IO;
+    using System.Collections.Generic;
 
     // Project namespaces
     using RscLog;
@@ -58,14 +59,6 @@ namespace RscCore.Controllers.FileController
             internal set;
             get;
         }
-        /// <summary>
-        /// Full path to file
-        /// </summary>
-        public string FullPath
-        {
-            internal set;
-            get;
-        }
 
         private string content;
         /// <summary>
@@ -80,6 +73,17 @@ namespace RscCore.Controllers.FileController
 
         #region Security properties
 
+        /// <summary>
+        /// Full path to file
+        /// </summary>
+        private string fullPath = String.Empty;
+        /// <summary>
+        /// Full path to file
+        /// </summary>
+        public string FullPath
+        {
+            get { return this.fullPath; }
+        }
         /// <summary>
         /// Flag if service is allowed to be read. Can be set by ControlFactory only.
         /// </summary>

@@ -16,102 +16,55 @@
  * You should have received a copy of the GNU General Public License          *
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.      *
  ******************************************************************************/
-namespace RscCore.Controllers
+namespace RscCore.Factories
 {
     // System namespaces
     using System;
     using System.Reflection;
+    using System.Collections.Generic;
 
     // Projet namespaces
+    using RscCore.Controllers.FileController;
     using RscConfig;
     using RscLog;
     using RscCore.Security;
-    using RscCore.Controllers.FileController;
-    using RscCore.Controllers.ServiceController;
 
-    /// <summary>
-    /// Static class designated for secure construction of controller objects.
-    /// Each controller has to be constructed by this factory.
-    /// Factory creates an object and set all necessary permissions according to configuration file.
-    /// No controller can be created directly (by constructor) because such object would have no permissions.
-    /// </summary>
-    public static class ControlFactory
+    internal static class FileManagerFactory
     {
         /// <summary>
-        /// Create instance of service with configured permissions. The permissions are read-only in final object.
-        /// Object may be created only if it is configured as allowed service in configuration file.
+        /// All paths loaded from config file.
+        /// Key is alias, value is full path.
         /// </summary>
-        /// <param name="serviceName">Name of service</param>
-        /// <returns>Instance of ServiceManager or null if service is not specified in configuration file.</returns>
-        public static ServiceManager GetService(string serviceName, string apiKey)
+        static Dictionary<string, string> fullPaths = null;
+        /// <summary>
+        /// Initialize this class.
+        /// </summary>
+        static FileManagerFactory()
         {
-            // This object will be returned if all succeeded
-            ServiceManager service = null;
-            // Configuration of service
-            AddService serviceConfiguration = null;
-            // If this variable is set to TRUE, no permissions will be set.
-            bool forbidAll = false;
-
-            // ---------------------------------------------------------
-            // SECURITY NOTICE:
-            // All mandatory checks (like API key, IP address...) should be done within following
-            // try-catch block. If anything fail, the forbidAll flag has to be set to TRUE.
-
-            try
-            {
-                // Prepare object with no permissions
-                service = new ServiceManager(serviceName);
-
-                // Load configuration of service from configuration file
-                if (false == Configurator.Settings.Services.AllowedServices.GetService(serviceName, out serviceConfiguration))
+                fullPaths = new Dictionary<string, string>();
+                try
                 {
-                    // Service is not configured and cannot be processed
-                    RscLog.Alert("Processing of service<{0}> is not allowed because it is not configured!", serviceName);
-                    forbidAll = true;
-                }
-                // Check API Key -- TODO: refactor this as separate function (reusable)
-                else if (Configurator.Settings.Security.CheckAPIKey)
-                {
-                    if (false == APIKeyManager.Instance().IsValidAPIKey(apiKey))
+                    foreach (var item in Configurator.Settings.Files.AllowedFiles)
                     {
-                        // Given API Key is not valid, request cannot be processed
-                        RscLog.Alert("Processing of service<{0}> is not allowed because of invalid APIKey<{1}>!", serviceName, apiKey);
-                        forbidAll = true;
+                        AddFile file = (AddFile)item;
+                        if (fullPaths.ContainsKey(file.Alias))
+                        {
+                            RscLog.Alert("Another definition of alias<{0}> found! I will use fullPath<{1}> from first occurence of this alias.",
+                                file.Alias,
+                                fullPaths[file.Alias]);
+                        }
+                        else
+                        {
+                            fullPaths.Add(file.Alias, file.FullPath);
+                        }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                forbidAll = true;
-                RscLog.Alert(ex, "Permissions could not been processed correctly. Forbidding all permissions.");
-            }
-
-            // ---------------------------------------------------------
-            // SECURITY NOTICE:
-            // The forbidAll flag is set now, so if it is still FALSE, you can start to allow some permissions.
-            // Put your own checks inside the following if block.
-
-            if (service != null && serviceConfiguration != null && forbidAll == false)
-            {
-
-                /*** HERE YOU CAN START TO ALLOWING COMMON PERMISSIONS ***/
-
-                // --- Allow Start (service may be started)
-                service.GetType().GetField("allowStart", BindingFlags.NonPublic | BindingFlags.Instance)
-                    .SetValue(service, serviceConfiguration.AllowStart);
-
-                // --- Allow Stop (service may be stopped)
-                service.GetType().GetField("allowStop", BindingFlags.NonPublic | BindingFlags.Instance)
-                    .SetValue(service, serviceConfiguration.AllowStop);
-
-                // --- Allow Status Check (user can check status of given service)
-                service.GetType().GetField("allowStatusCheck", BindingFlags.NonPublic | BindingFlags.Instance)
-                    .SetValue(service, serviceConfiguration.AllowStatusCheck);
-            }
-            
-            return service;
+                catch (Exception ex)
+                {
+                    RscLog.Error(ex, "Could not load allowed files from config file. No file request will be processed.");
+                    fullPaths.Clear();
+                }
         }
-
 
         /// <summary>
         /// Create instance of file with configured permissions. The permissions are read-only in final object.
@@ -119,7 +72,7 @@ namespace RscCore.Controllers
         /// </summary>
         /// <param name="serviceName">Full path to file</param>
         /// <returns>Instance of FileManager or null if file is not specified in configuration file.</returns>
-        public static FileManager GetFile(string fileAlias, string apiKey)
+        public static FileManager CreateFileManager(string fileAlias, string apiKey)
         {
             // This object will be returned if all succeeded
             FileManager fileManager = null;
@@ -143,6 +96,13 @@ namespace RscCore.Controllers
                 {
                     // File is not configured and cannot be processed
                     RscLog.AuditFailed("Processing of file<{0}> is not allowed because it is not configured!", fileAlias);
+                    forbidAll = true;
+                }
+                // Check if path is configured for this alias (this should not happen if we have the configuration above)
+                else if (false == fullPaths.ContainsKey(fileAlias))
+                {
+                    // File is not configured and cannot be processed
+                    RscLog.AuditFailed("Processing of file<{0}> is not allowed. Alias is configured but no path found!", fileAlias);
                     forbidAll = true;
                 }
                 // Check API Key -- TODO: refactor this as separate function (reusable)
@@ -174,8 +134,12 @@ namespace RscCore.Controllers
 
                 /*** HERE YOU CAN START TO ALLOWING COMMON PERMISSIONS ***/
 
+                // --- Configure full path to file
+                fileManager.GetType().GetField("fullPath", BindingFlags.NonPublic | BindingFlags.Instance)
+                    .SetValue(fileManager, fullPaths[fileAlias]);
+
                 // --- Allow Start (service may be started)
-                fileManager.GetType().GetField("allowStart", BindingFlags.NonPublic | BindingFlags.Instance)
+                fileManager.GetType().GetField("allowRead", BindingFlags.NonPublic | BindingFlags.Instance)
                     .SetValue(fileManager, fileConfiguration.AllowRead);
             }
 
