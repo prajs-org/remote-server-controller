@@ -26,6 +26,7 @@ namespace RscCore
     using RscCore.Controllers;
     using RscLog;
     using System;
+    using RscCore.Factories;
 
     /// <summary>
     /// Implementation of REST controller.
@@ -45,19 +46,19 @@ namespace RscCore
         public ServiceStatus ServiceStatusJSON(string serviceName, string apiKey)
         {
             RscLog.AuditIncoming(apiKey, serviceLogMessage, "SERVICE STATUS", serviceName);
-            return ControlFactory.GetService(serviceName, apiKey).GetStatus();
+            return ServiceManagerFactory.CreateServiceManager(serviceName, apiKey).GetStatus();
         }
 
         public ServiceActionResult ServiceStartJSON(string serviceName, string apiKey)
         {
             RscLog.AuditIncoming(apiKey, serviceLogMessage, "START SERVICE", serviceName);
-            return ControlFactory.GetService(serviceName, apiKey).Start();
+            return ServiceManagerFactory.CreateServiceManager(serviceName, apiKey).Start();
         }
 
         public ServiceActionResult ServiceStopJSON(string serviceName, string apiKey)
         {
             RscLog.AuditIncoming(apiKey, serviceLogMessage, "STOP SERVICE", serviceName);
-            return ControlFactory.GetService(serviceName, apiKey).Stop();
+            return ServiceManagerFactory.CreateServiceManager(serviceName, apiKey).Stop();
         }
 
         #endregion
@@ -67,7 +68,7 @@ namespace RscCore
         public FileReadResult FileReadByAliasJSON(string fileAlias, string apiKey)
         {
             RscLog.AuditIncoming(apiKey, fileLogMessage, "READ FILE", fileAlias);
-            return ControlFactory.GetFile(fileAlias, apiKey).Read();
+            return FileManagerFactory.CreateFileManager(fileAlias, apiKey).Read();
         }
 
         public FileReadResult FileReadByAliasStartJSON(string fileAlias, string length, string apiKey)
@@ -76,7 +77,7 @@ namespace RscCore
             try
             {
                 int iLength = Convert.ToInt32(length);
-                return ControlFactory.GetFile(fileAlias, apiKey).ReadStart(iLength);
+                return FileManagerFactory.CreateFileManager(fileAlias, apiKey).ReadStart(iLength);
             }
             catch
             {
@@ -91,7 +92,7 @@ namespace RscCore
             try
             {
                 int iLength = Convert.ToInt32(length);
-                return ControlFactory.GetFile(fileAlias, apiKey).ReadEnd(iLength);
+                return FileManagerFactory.CreateFileManager(fileAlias, apiKey).ReadEnd(iLength);
             }
             catch
             {
@@ -107,7 +108,7 @@ namespace RscCore
             {
                 int iFrom = Convert.ToInt32(from);
                 int iLength = Convert.ToInt32(length);
-                return ControlFactory.GetFile(fileAlias, apiKey).ReadInterval(iFrom, iLength);
+                return FileManagerFactory.CreateFileManager(fileAlias, apiKey).ReadInterval(iFrom, iLength);
             }
             catch
             {

@@ -241,12 +241,12 @@ namespace RscConfig
             return ((AddFile)service).FullPath;
         }
 
-        public bool GetFile(string fullPath, out AddFile outFile)
+        public bool GetFile(string alias, out AddFile outFile)
         {
-            foreach (var item in Configurator.Settings.Services.AllowedServices)
+            foreach (var item in Configurator.Settings.Files.AllowedFiles)
             {
                 AddFile file = (AddFile)item;
-                if (fullPath == file.FullPath)
+                if (alias == file.Alias)
                 {
                     outFile = file;
                     return true;

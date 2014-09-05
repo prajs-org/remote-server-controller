@@ -125,6 +125,7 @@ namespace RscInterface
         {
             this.FullPath = fullPath;
             this.Result = result.ToString();
+            this.Content = content;
         }
     }
 }

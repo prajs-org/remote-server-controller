@@ -139,7 +139,7 @@ namespace RscCore.Controllers.FileController
                         // Read file
                         char[] buffer = new char[length];
                         var i = sr.ReadBlock(buffer, start, length);
-                        content = buffer.ToString();
+                        content = new string(buffer);
                         return ReturnCodes.ActionReturnCode.OK;
                     }
                 }
