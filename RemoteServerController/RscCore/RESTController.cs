@@ -34,24 +34,53 @@ namespace RscCore
     /// </summary>
     public class RESTController : IRESTController
     {
-        const string logMessage = "Incoming request<{0}> for service<{1}>.";
+        const string serviceLogMessage =    "Incoming request<{0}> for service<{1}>.";
+        const string fileLogMessage =       "Incoming request<{0}> for file<{1}>.";
+
+        #region ServiceController
 
         public ServiceStatus ServiceStatusJSON(string serviceName, string apiKey)
         {
-            Log.Debug(logMessage, "SERVICE STATUS", serviceName);
+            RscLog.AuditIncoming(serviceLogMessage, "SERVICE STATUS", serviceName);
             return ControlFactory.GetService(serviceName, apiKey).GetStatus();
         }
 
         public ServiceActionResult ServiceStartJSON(string serviceName, string apiKey)
         {
-            Log.Debug(logMessage, "START SERVICE", serviceName);
+            RscLog.AuditIncoming(serviceLogMessage, "START SERVICE", serviceName);
             return ControlFactory.GetService(serviceName, apiKey).Start();
         }
 
         public ServiceActionResult ServiceStopJSON(string serviceName, string apiKey)
         {
-            Log.Debug(logMessage, "STOP SERVICE", serviceName);
+            RscLog.AuditIncoming(serviceLogMessage, "STOP SERVICE", serviceName);
             return ControlFactory.GetService(serviceName, apiKey).Stop();
         }
+
+        #endregion
+
+        #region FileController
+
+        public FileReadResult FileReadByAliasJSON(string fileAlias, string apiKey)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public ServiceActionResult FileReadByAliasStartJSON(string fileAlias, string length, string apiKey)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public ServiceActionResult FileReadByAliasEndJSON(string serviceName, string length, string apiKey)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public ServiceActionResult FileReadByAliasIntervalJSON(string serviceName, string from, string length, string apiKey)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        #endregion
     }
 }

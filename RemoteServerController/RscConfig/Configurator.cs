@@ -62,6 +62,13 @@ namespace RscConfig
             get { return (Services)this["Services"]; }
         }
 
+        [ConfigurationProperty("Files", IsRequired = true)]
+        public Files Files
+        {
+            set { this["Files"] = value; }
+            get { return (Files)this["Files"]; }
+        }
+
         [ConfigurationProperty("Security", IsRequired = true)]
         public Security Security
         {
@@ -205,6 +212,72 @@ namespace RscConfig
         {
             get { return (bool)base["AllowStatusCheck"]; }
             set { base["AllowStop"] = value; }
+        }
+    }
+
+    #endregion
+
+    #region Files
+
+    public class Files : ConfigurationElement
+    {
+        [ConfigurationProperty("AllowedFileCollection", IsRequired = true)]
+        public AllowedFileCollection AllowedFiles
+        {
+            get { return (AllowedFileCollection)this["AllowedFileCollection"]; }
+            set { this["AllowedFileCollection"] = value; }
+        }
+    }
+
+    public class AllowedFileCollection : ConfigurationElementCollection
+    {
+        protected override ConfigurationElement CreateNewElement()
+        {
+            return new AddFile();
+        }
+
+        protected override object GetElementKey(ConfigurationElement service)
+        {
+            return ((AddFile)service).FullPath;
+        }
+
+        public bool GetFile(string fullPath, out AddFile outFile)
+        {
+            foreach (var item in Configurator.Settings.Services.AllowedServices)
+            {
+                AddFile file = (AddFile)item;
+                if (fullPath == file.FullPath)
+                {
+                    outFile = file;
+                    return true;
+                }
+            }
+            outFile = null;
+            return false;
+        }
+    }
+
+    public class AddFile : ConfigurationElement
+    {
+        [ConfigurationProperty("FullPath", IsKey = true, IsRequired = true)]
+        public string FullPath
+        {
+            get { return (string)base["FullPath"]; }
+            set { base["FullPath"] = value; }
+        }
+
+        [ConfigurationProperty("AllowRead", IsKey = true, IsRequired = true)]
+        public bool AllowRead
+        {
+            get { return (bool)base["AllowRead"]; }
+            set { base["AllowRead"] = value; }
+        }
+
+        [ConfigurationProperty("Alias", IsKey = true, IsRequired = true)]
+        public string Alias
+        {
+            get { return (string)base["Alias"]; }
+            set { base["Alias"] = value; }
         }
     }
 

@@ -79,16 +79,16 @@ namespace RscHost
                 if (host != null)
                 {
                     host.Open();
-                    Log.Info("Service is running on " + Configurator.Settings.Network.Host + ":" + Configurator.Settings.Network.Port);
+                    RscLog.Info("Service is running on " + Configurator.Settings.Network.Host + ":" + Configurator.Settings.Network.Port);
                 }
                 else
                 {
-                    Log.Error("Host not created.");
+                    RscLog.Error("Host not created.");
                 }
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Host could not been started.");
+                RscLog.Error(ex, "Host could not been started.");
                 this.OnStop();
             }
         }
@@ -102,7 +102,7 @@ namespace RscHost
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Host could not been closed correctly.");
+                RscLog.Error(ex, "Host could not been closed correctly.");
             }
         }
 

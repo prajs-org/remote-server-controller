@@ -50,7 +50,7 @@ namespace RscCore.Security
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Could not load API Keys.");
+                RscLog.Error(ex, "Could not load API Keys.");
                 allowedAPIKeys.Clear();
             }
         }
