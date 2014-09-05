@@ -25,6 +25,7 @@ namespace RscCore
     using RscInterface;
     using RscCore.Controllers;
     using RscLog;
+    using System;
 
     /// <summary>
     /// Implementation of REST controller.
@@ -36,24 +37,26 @@ namespace RscCore
     {
         const string serviceLogMessage =    "Incoming request<{0}> for service<{1}>.";
         const string fileLogMessage =       "Incoming request<{0}> for file<{1}>.";
+        const string exInvalidInteger =     "Value<{0}> is not valid Integer.";
+        const string exInvalidInteger2 =    "Values <{0}> and/or <{1}> are not valid Integer.";
 
         #region ServiceController
 
         public ServiceStatus ServiceStatusJSON(string serviceName, string apiKey)
         {
-            RscLog.AuditIncoming(serviceLogMessage, "SERVICE STATUS", serviceName);
+            RscLog.AuditIncoming(apiKey, serviceLogMessage, "SERVICE STATUS", serviceName);
             return ControlFactory.GetService(serviceName, apiKey).GetStatus();
         }
 
         public ServiceActionResult ServiceStartJSON(string serviceName, string apiKey)
         {
-            RscLog.AuditIncoming(serviceLogMessage, "START SERVICE", serviceName);
+            RscLog.AuditIncoming(apiKey, serviceLogMessage, "START SERVICE", serviceName);
             return ControlFactory.GetService(serviceName, apiKey).Start();
         }
 
         public ServiceActionResult ServiceStopJSON(string serviceName, string apiKey)
         {
-            RscLog.AuditIncoming(serviceLogMessage, "STOP SERVICE", serviceName);
+            RscLog.AuditIncoming(apiKey, serviceLogMessage, "STOP SERVICE", serviceName);
             return ControlFactory.GetService(serviceName, apiKey).Stop();
         }
 
@@ -63,22 +66,54 @@ namespace RscCore
 
         public FileReadResult FileReadByAliasJSON(string fileAlias, string apiKey)
         {
-            throw new System.NotImplementedException();
+            RscLog.AuditIncoming(apiKey, fileLogMessage, "READ FILE", fileAlias);
+            return ControlFactory.GetFile(fileAlias, apiKey).Read();
         }
 
-        public ServiceActionResult FileReadByAliasStartJSON(string fileAlias, string length, string apiKey)
+        public FileReadResult FileReadByAliasStartJSON(string fileAlias, string length, string apiKey)
         {
-            throw new System.NotImplementedException();
+            RscLog.AuditIncoming(apiKey, fileLogMessage, "READ FILE START", fileAlias);
+            try
+            {
+                int iLength = Convert.ToInt32(length);
+                return ControlFactory.GetFile(fileAlias, apiKey).ReadStart(iLength);
+            }
+            catch
+            {
+                RscLog.Error(exInvalidInteger, length);
+                return new FileReadResult(fileAlias, ReturnCodes.ActionReturnCode.FormatError, String.Empty);
+            }
         }
 
-        public ServiceActionResult FileReadByAliasEndJSON(string serviceName, string length, string apiKey)
+        public FileReadResult FileReadByAliasEndJSON(string fileAlias, string length, string apiKey)
         {
-            throw new System.NotImplementedException();
+            RscLog.AuditIncoming(apiKey, fileLogMessage, "READ FILE END", fileAlias);
+            try
+            {
+                int iLength = Convert.ToInt32(length);
+                return ControlFactory.GetFile(fileAlias, apiKey).ReadEnd(iLength);
+            }
+            catch
+            {
+                RscLog.Error(exInvalidInteger, length);
+                return new FileReadResult(fileAlias, ReturnCodes.ActionReturnCode.FormatError, String.Empty);
+            }
         }
 
-        public ServiceActionResult FileReadByAliasIntervalJSON(string serviceName, string from, string length, string apiKey)
+        public FileReadResult FileReadByAliasIntervalJSON(string fileAlias, string from, string length, string apiKey)
         {
-            throw new System.NotImplementedException();
+            RscLog.AuditIncoming(apiKey, fileLogMessage, "READ FILE INTERVAL", fileAlias);
+            try
+            {
+                int iFrom = Convert.ToInt32(from);
+                int iLength = Convert.ToInt32(length);
+                return ControlFactory.GetFile(fileAlias, apiKey).ReadInterval(iFrom, iLength);
+            }
+            catch
+            {
+                RscLog.Error(exInvalidInteger2, from, length);
+                return new FileReadResult(fileAlias, ReturnCodes.ActionReturnCode.FormatError, String.Empty);
+            }
         }
 
         #endregion

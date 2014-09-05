@@ -101,19 +101,32 @@ namespace RscLog
             logAppender.Logger.Log(typeof(Log4NetWrapper), level, message, exception);
         }
 
-        public void AuditIncoming(string message, params object[] args)
+        public void AuditIncoming(string apiKey, string message, params object[] args)
         {
-            auditAppender.Logger.Log(typeof(Log4NetWrapper), Level.Info, String.Format(message, args), null);
+            auditAppender.Logger.Log(typeof(Log4NetWrapper), Level.Info, BuildAuditMessage(apiKey, message, args), null);
         }
 
-        public void AuditSuccess(string message, params object[] args)
+        public void AuditSuccess(string apiKey, string message, params object[] args)
         {
-            auditAppender.Logger.Log(typeof(Log4NetWrapper), Level.Info, String.Format(message, args), null);
+            auditAppender.Logger.Log(typeof(Log4NetWrapper), Level.Info, BuildAuditMessage(apiKey, message, args), null);
         }
 
-        public void AuditFailed(string message, params object[] args)
+        public void AuditFailed(string apiKey, string message, params object[] args)
         {
-            auditAppender.Logger.Log(typeof(Log4NetWrapper), Level.Warn, String.Format(message, args), null);
+            auditAppender.Logger.Log(typeof(Log4NetWrapper), Level.Warn, BuildAuditMessage(apiKey, message, args), null);
+        }
+
+        #endregion
+
+        #region Private
+
+        private string BuildAuditMessage(string apiKey, string message, params object[] args)
+        {
+            StringBuilder sb = new StringBuilder("[")
+                .Append(apiKey)
+                .Append("] ")
+                .Append(String.Format(message, args));
+            return sb.ToString();
         }
 
         #endregion

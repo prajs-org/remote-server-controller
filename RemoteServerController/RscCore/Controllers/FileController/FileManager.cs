@@ -41,15 +41,23 @@ namespace RscCore.Controllers.FileController
         /// Create instance of FileManager class. Instance can be created only by ControlFactory. If you create it directly, all permissions will be set to false.
         /// </summary>
         /// <param name="serviceName">Name of service.</param>
-        public FileManager(string fullPath)
+        public FileManager(string fileAlias)
         {
-            this.FullPath = fullPath;
+            this.FileAlias = fileAlias;
         }
 
         #endregion
 
         #region Public properties
 
+        /// <summary>
+        /// Full path to file
+        /// </summary>
+        public string FileAlias
+        {
+            internal set;
+            get;
+        }
         /// <summary>
         /// Full path to file
         /// </summary>
@@ -99,7 +107,7 @@ namespace RscCore.Controllers.FileController
             }
             else
             {
-                RscLog.Alert("File<{0}> cannot be read because it is not configured.", this.FullPath);
+                RscLog.AuditFailed("File<{0}> cannot be read because it is not allowed to read.", this.FileAlias);
                 return new FileReadResult(this.FullPath, ReturnCodes.ActionReturnCode.NotAllowed, String.Empty);
             }
         }
@@ -115,7 +123,7 @@ namespace RscCore.Controllers.FileController
             }
             else
             {
-                RscLog.Alert("File<{0}> cannot be read because it is not configured.", this.FullPath);
+                RscLog.AuditFailed("File<{0}> cannot be read because it is not allowed to read.", this.FileAlias);
                 return new FileReadResult(this.FullPath, ReturnCodes.ActionReturnCode.NotAllowed, String.Empty);
             }
         }
@@ -131,7 +139,7 @@ namespace RscCore.Controllers.FileController
             }
             else
             {
-                RscLog.Alert("File<{0}> cannot be read because it is not configured.", this.FullPath);
+                RscLog.AuditFailed("File<{0}> cannot be read because it is not allowed to read.", this.FileAlias);
                 return new FileReadResult(this.FullPath, ReturnCodes.ActionReturnCode.NotAllowed, String.Empty);
             }
         }
@@ -147,7 +155,7 @@ namespace RscCore.Controllers.FileController
             }
             else
             {
-                RscLog.Alert("File<{0}> cannot be read because it is not configured.", this.FullPath);
+                RscLog.AuditFailed("File<{0}> cannot be read because it is not allowed to read.", this.FileAlias);
                 return new FileReadResult(this.FullPath, ReturnCodes.ActionReturnCode.NotAllowed, String.Empty);
             }
         }

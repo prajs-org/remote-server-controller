@@ -92,17 +92,17 @@ namespace RscLog
             WriteException(EventLogEntryType.Error, exception, comment);
         }
 
-        public void AuditIncoming(string message, params object[] args)
+        public void AuditIncoming(string apiKey, string message, params object[] args)
         {
             WriteLog(EventLogEntryType.Information, message, args);
         }
 
-        public void AuditSuccess(string message, params object[] args)
+        public void AuditSuccess(string apiKey, string message, params object[] args)
         {
             WriteLog(EventLogEntryType.Information, message, args);
         }
 
-        public void AuditFailed(string message, params object[] args)
+        public void AuditFailed(string apiKey, string message, params object[] args)
         {
             WriteLog(EventLogEntryType.Warning, message, args);
         }
