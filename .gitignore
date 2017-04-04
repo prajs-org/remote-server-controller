@@ -3,3 +3,9 @@
 ################################################################################
 
 *.suo
+*.licenseheader
+/RemoteServerController/RscConfig/obj/Debug
+/RemoteServerController/RscCore/obj/Debug
+/RemoteServerController/RscHost/obj/x86/Debug
+/RemoteServerController/RscInterface/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
+/RemoteServerController/RscLog/obj/Debug
