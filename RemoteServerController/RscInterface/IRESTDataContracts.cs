@@ -94,39 +94,4 @@ namespace RscInterface
             this.Result = result.ToString();
         }
     }
-
-    /// <summary>
-    /// Data contract for reading a file.
-    /// </summary>
-    [DataContract]
-    public class FileReadResult
-    {
-        /// <summary>
-        /// Full path to file
-        /// </summary>
-        [DataMember]
-        public string FullPath { get; set; }
-        /// <summary>
-        /// Result of reading
-        /// </summary>
-        [DataMember]
-        public string Result { get; set; }
-        /// <summary>
-        /// Content of file
-        /// </summary>
-        [DataMember]
-        public string Content {get;set;}
-        /// <summary>
-        /// Data contract with result of action on file.
-        /// </summary>
-        /// <param name="fullPath">Service name</param>
-        /// <param name="content">Content of file</param>
-        /// <param name="result">Result of reading</param>
-        public FileReadResult(string fullPath, ReturnCodes.ActionReturnCode result, string content)
-        {
-            this.FullPath = fullPath;
-            this.Result = result.ToString();
-            this.Content = content;
-        }
-    }
 }
