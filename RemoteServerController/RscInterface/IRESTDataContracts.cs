@@ -43,11 +43,6 @@ namespace RscInterface
         [DataMember]
         public string Name { get; set; }
         /// <summary>
-        /// Version of service executable
-        /// </summary>
-        [DataMember]
-        public string Version { get; set; }
-        /// <summary>
         /// Result of checking service status
         /// </summary>
         [DataMember]
@@ -58,10 +53,9 @@ namespace RscInterface
         /// <param name="name">Service name</param>
         /// <param name="status">Current service status</param>
         /// <param name="result">Result of checking of service status</param>
-        public ServiceStatus(string name, string version, ServiceControllerStatus? status, ReturnCodes.ActionReturnCode result)
+        public ServiceStatus(string name, ServiceControllerStatus? status, ReturnCodes.ActionReturnCode result)
         {
             this.Name = name;
-            this.Version = version;
             this.Status = status.HasValue ? status.ToString() : Constants.UknownToken;
             this.Result = result.ToString();
         }
