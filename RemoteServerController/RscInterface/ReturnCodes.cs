@@ -41,7 +41,6 @@ namespace RscInterface
             Timeout,                // Action failed on timeout
             UnmetRequirements,      // Requirements for action are not fulfilled
             UnknownError,           // Some unspecified error
-            FileNotExist,           // File does not exist
             FormatError,            // Request is in wrong format
         }
     }

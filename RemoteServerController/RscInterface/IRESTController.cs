@@ -64,25 +64,5 @@ namespace RscInterface
         ServiceActionResult ServiceStopJSON(string serviceName, string apiKey);
 
         #endregion
-
-        #region FileController
-
-        [WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "JSON/File/Read/{fileAlias}?apiKey={apiKey}")]
-        [OperationContract]
-        FileReadResult FileReadByAliasJSON(string fileAlias, string apiKey);
-
-        [WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "JSON/File/Read/{fileAlias}/Start/{length}?apiKey={apiKey}")]
-        [OperationContract]
-        FileReadResult FileReadByAliasStartJSON(string fileAlias, string length, string apiKey);
-
-        [WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "JSON/File/Read/{fileAlias}/End/{length}?apiKey={apiKey}")]
-        [OperationContract]
-        FileReadResult FileReadByAliasEndJSON(string fileAlias, string length, string apiKey);
-
-        [WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "JSON/File/Read/{fileAlias}/Interval/{from}/{length}?apiKey={apiKey}")]
-        [OperationContract]
-        FileReadResult FileReadByAliasIntervalJSON(string fileAlias, string from, string length, string apiKey);
-
-        #endregion
     }
 }
