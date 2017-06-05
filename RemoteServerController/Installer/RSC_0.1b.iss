@@ -2,10 +2,10 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Remote Server Controller"
-#define MyAppVersion "0.1.9.14230b"
-#define MyAppYear "2014"
+#define MyAppVersion "0.2017.156.14232"
+#define MyAppYear "2017"
 #define MyAppPublisher "Karel Prajs"
-#define MyAppURL "http://rsc.codeplex.com"
+#define MyAppURL "https://github.com/prajs-org/remote-server-controller"
 #define MyAppExeName "RemoteServerController.exe"
 
 [Setup]
@@ -24,8 +24,8 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
-LicenseFile=D:\Work\Sources\RSC\RemoteServerController\license.txt
-OutputBaseFilename=setup
+LicenseFile=E:\Work\prajs-org\remote-server-controller\RemoteServerController\license.txt
+OutputBaseFilename=RemoteServerControllerSetup
 Compression=lzma
 SolidCompression=yes
 
@@ -33,13 +33,15 @@ SolidCompression=yes
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
-Source: "D:\Work\Sources\RSC\RemoteServerController\RscHost\bin\Release\RemoteServerController.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\Work\Sources\RSC\RemoteServerController\RscHost\bin\Release\RemoteServerController.exe.config"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\Work\Sources\RSC\RemoteServerController\RscHost\bin\Release\RscConfig.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\Work\Sources\RSC\RemoteServerController\RscHost\bin\Release\RscCore.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\Work\Sources\RSC\RemoteServerController\RscHost\bin\Release\RscInterface.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\Work\Sources\RSC\RemoteServerController\RscHost\bin\Release\RscLog.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\Work\Sources\RSC\RemoteServerController\license.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "E:\Work\prajs-org\remote-server-controller\RemoteServerController\RscHost\bin\Release\RemoteServerController.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "E:\Work\prajs-org\remote-server-controller\RemoteServerController\RscHost\bin\Release\RemoteServerController.exe.config"; DestDir: "{app}"; Flags: ignoreversion
+Source: "E:\Work\prajs-org\remote-server-controller\RemoteServerController\RscHost\bin\Release\RscConfig.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "E:\Work\prajs-org\remote-server-controller\RemoteServerController\RscHost\bin\Release\RscCore.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "E:\Work\prajs-org\remote-server-controller\RemoteServerController\RscHost\bin\Release\RscInterface.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "E:\Work\prajs-org\remote-server-controller\RemoteServerController\RscHost\bin\Release\RscLog.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "E:\Work\prajs-org\remote-server-controller\RemoteServerController\RscHost\bin\Release\log4net.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "E:\Work\prajs-org\remote-server-controller\RemoteServerController\RscHost\bin\Release\log4net.xml"; DestDir: "{app}"; Flags: ignoreversion
+Source: "E:\Work\prajs-org\remote-server-controller\RemoteServerController\license.txt"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

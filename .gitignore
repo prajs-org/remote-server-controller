@@ -16,3 +16,14 @@
 /RemoteServerController/RscInterface/obj/Debug
 /RemoteServerController/RscLog/bin/Debug
 /RemoteServerController/RscHost/RscHost.csproj.user
+/RemoteServerController/RscConfig/bin/Release
+/RemoteServerController/RscConfig/obj/Release
+/RemoteServerController/RscCore/bin/Release
+/RemoteServerController/RscCore/obj/Release
+/RemoteServerController/RscHost/bin/Release
+/RemoteServerController/RscHost/obj/x86/Release
+/RemoteServerController/RscInterface/bin/Release
+/RemoteServerController/RscInterface/obj/Release
+/RemoteServerController/RscLog/bin/Release
+/RemoteServerController/RscLog/obj/Release
+/RemoteServerController/Installer/Output
