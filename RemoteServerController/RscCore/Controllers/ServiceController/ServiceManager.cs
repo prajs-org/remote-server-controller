@@ -21,8 +21,12 @@ namespace RscCore.Controllers.ServiceController
 {
     // System namespaces
     using System;
+    using System.Diagnostics;
+    using System.IO;
     using System.Linq;
+    using System.Management;
     using System.ServiceProcess;
+    using System.Text.RegularExpressions;
 
     // Project namespaces
     using RscLog;
@@ -160,12 +164,13 @@ namespace RscCore.Controllers.ServiceController
             if (this.AllowStatusCheck)
             {
                 var status = GetStatusToken();
-                return new ServiceStatus(this.Name, status, status == null ? ReturnCodes.ActionReturnCode.UnknownError : ReturnCodes.ActionReturnCode.OK);
+                var version = GetVersion();
+                return new ServiceStatus(this.Name, version, status, status == null ? ReturnCodes.ActionReturnCode.UnknownError : ReturnCodes.ActionReturnCode.OK);
             }
             else
             {
                 RscLog.AuditFailed("Check of status of service<{0}> is not allowed!", this.Name);
-                return new ServiceStatus(this.Name, null, ReturnCodes.ActionReturnCode.NotAllowed);
+                return new ServiceStatus(this.Name, String.Empty, null, ReturnCodes.ActionReturnCode.NotAllowed);
             }
         }
         /// <summary>
@@ -190,6 +195,32 @@ namespace RscCore.Controllers.ServiceController
             }
 
             return status;
+        }
+        /// <summary>
+        /// Get product version of service executable.
+        /// </summary>
+        /// <returns>Product version of service executable or empty string if not found</returns>
+        public string GetVersion()
+        {
+            var version = String.Empty;
+            var executable = GetServiceExecutable();
+            try
+            {
+                if (executable != null)
+                {
+                    var versionInfo = FileVersionInfo.GetVersionInfo(executable);
+                    version = String.Format("{0}.{1}.{2}.{3}", versionInfo.ProductMajorPart,
+                                                               versionInfo.ProductMinorPart,
+                                                               versionInfo.ProductBuildPart,
+                                                               versionInfo.ProductPrivatePart);
+                }
+            }
+            catch(FileNotFoundException ex)
+            {
+                RscLog.Error("File for service executable<{0}> not found!", executable);
+                version = String.Empty;
+            }
+            return version;
         }
 
         #endregion
@@ -267,6 +298,35 @@ namespace RscCore.Controllers.ServiceController
                 RscLog.Error("Status of service<{0}> cannot be changed because current status cannot be determined.", this.Name);
             }
             return new ServiceActionResult(this.Name, currentStatus, error_code);
+        }
+        /// <summary>
+        /// Get full path to service executable.
+        /// </summary>
+        /// <returns>Full path to service executable or null if not found</returns>
+        private string GetServiceExecutable()
+        {
+            WqlObjectQuery wqlObjectQuery = new WqlObjectQuery(string.Format("SELECT * FROM Win32_Service WHERE Name = '{0}'", this.Name));
+            ManagementObjectSearcher managementObjectSearcher = new ManagementObjectSearcher(wqlObjectQuery);
+            ManagementObjectCollection managementObjectCollection = managementObjectSearcher.Get();
+
+            foreach (ManagementObject managementObject in managementObjectCollection)
+            {
+                var executeCommand = managementObject.GetPropertyValue("PathName").ToString();
+                // This ugly part is necessary because the PathName can return also parameters - I do not want them to be included in the path
+                Regex regExtWithoutParameters = new Regex(@".[A-Za-z0-9]+");
+                var dir = Path.GetDirectoryName(executeCommand);
+                var filename = Path.GetFileNameWithoutExtension(executeCommand);
+                var ext = Path.GetExtension(executeCommand);
+                if(!String.IsNullOrWhiteSpace(ext))
+                {
+                    Match m = regExtWithoutParameters.Match(ext);
+                    ext = m.Value;
+                }
+
+                return Path.Combine(dir, filename + ext);
+            }
+
+            return null;
         }
 
         #endregion
