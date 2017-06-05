@@ -9,3 +9,9 @@
 /RemoteServerController/RscHost/obj/x86/Debug
 /RemoteServerController/RscInterface/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
 /RemoteServerController/RscLog/obj/Debug
+/RemoteServerController/RscConfig/bin/Debug
+/RemoteServerController/RscCore/bin/Debug
+/RemoteServerController/RscHost/bin/Debug
+/RemoteServerController/RscInterface/bin/Debug
+/RemoteServerController/RscInterface/obj/Debug
+/RemoteServerController/RscLog/bin/Debug
