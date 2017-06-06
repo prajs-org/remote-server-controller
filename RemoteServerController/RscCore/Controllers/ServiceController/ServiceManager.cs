@@ -314,6 +314,7 @@ namespace RscCore.Controllers.ServiceController
                 var executeCommand = managementObject.GetPropertyValue("PathName").ToString();
                 // This ugly part is necessary because the PathName can return also parameters - I do not want them to be included in the path
                 Regex regExtWithoutParameters = new Regex(@".[A-Za-z0-9]+");
+                executeCommand = executeCommand.Trim('"');
                 var dir = Path.GetDirectoryName(executeCommand);
                 var filename = Path.GetFileNameWithoutExtension(executeCommand);
                 var ext = Path.GetExtension(executeCommand);
