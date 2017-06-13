@@ -28,6 +28,7 @@ namespace RscCore
     using RscLog;
     using System;
     using RscCore.Factories;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Implementation of REST controller.
@@ -60,6 +61,22 @@ namespace RscCore
         {
             RscLog.AuditIncoming(apiKey, serviceLogMessage, "STOP SERVICE", serviceName);
             return ServiceManagerFactory.CreateServiceManager(serviceName, apiKey).Stop();
+        }
+
+        public List<ServiceStatus> AllServicesStatusJSON(string apiKey)
+        {
+            List<ServiceStatus> serviceStatuses = new List<ServiceStatus>();
+            RscLog.AuditIncoming(apiKey, serviceLogMessage, "SERVICE STATUS", RscConfig.Constants.AllItems);
+            foreach(var item in RscConfig.Configurator.Settings.Services.AllowedServices)
+            {
+                if(item is RscConfig.AddService)
+                {
+                    var allowedService = (RscConfig.AddService)item;
+                    var servisStatus = ServiceManagerFactory.CreateServiceManager(allowedService.Name, apiKey).GetStatus();
+                    serviceStatuses.Add(servisStatus);
+                }
+            }
+            return serviceStatuses;
         }
 
         #endregion

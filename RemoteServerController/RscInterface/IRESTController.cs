@@ -22,6 +22,7 @@ namespace RscInterface
     // System namespaces
     using System.ServiceModel;
     using System.ServiceModel.Web;
+    using System.Collections.Generic;
 
     // Project namespaces
     // -- none
@@ -31,6 +32,14 @@ namespace RscInterface
     {
         #region ServiceController
 
+        /// <summary>
+        /// Return current status of all services allowed by permission configuration.
+        /// See specification for possible action results.
+        /// </summary>
+        /// <returns>Object with information about current status and result of this action.</returns>
+        [WebGet(ResponseFormat = WebMessageFormat.Json, UriTemplate = "JSON/Service/Status/?apiKey={apiKey}")]
+        [OperationContract]
+        List<ServiceStatus> AllServicesStatusJSON(string apiKey);
         /// <summary>
         /// Return current status of given service if allowed by permission configuration.
         /// See specification for possible action results.

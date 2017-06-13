@@ -69,5 +69,9 @@ namespace RscConfig
         /// Description of uknown status
         /// </summary>
         public static string UknownToken = "Unknown";
+        /// <summary>
+        /// Token will be written to trace when ALL service statuses are requested (instead of service name).
+        /// </summary>
+        public static string AllItems = "ALL";
     }
 }

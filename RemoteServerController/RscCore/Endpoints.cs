@@ -73,7 +73,8 @@ namespace RscCore
                                                                new EndpointAddress(uri));
                 // Return the new host
                 restHost.AddServiceEndpoint(endPoint);
-                restHost.Authorization.ServiceAuthorizationManager = new AuthorizationManager();
+                // Not used ATM
+                //restHost.Authorization.ServiceAuthorizationManager = new AuthorizationManager();
             }
             catch (Exception ex)
             {

@@ -215,7 +215,7 @@ namespace RscCore.Controllers.ServiceController
                                                                versionInfo.ProductPrivatePart);
                 }
             }
-            catch(FileNotFoundException ex)
+            catch(FileNotFoundException)
             {
                 RscLog.Error("File for service executable<{0}> not found!", executable);
                 version = String.Empty;
