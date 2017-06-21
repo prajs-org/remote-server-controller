@@ -55,8 +55,8 @@ namespace RscCore
             {
                 // Address
                 Uri uri = new Uri(String.Format("http://{0}:{1}/{2}",
-                    Configurator.Settings.Network.Host,
-                    Configurator.Settings.Network.Port,
+                    StaticConfiguration.Settings.Network.Host,
+                    StaticConfiguration.Settings.Network.Port,
                     typeof(RESTController).Name));
                 RscLog.Debug("URI<{0}>", uri.ToString());
                 // Try to unbind SSL from port
@@ -66,7 +66,7 @@ namespace RscCore
                 // No security
                 WebHttpBinding binding = new WebHttpBinding(WebHttpSecurityMode.None);
                 // Allow cross domain scripts
-                binding.CrossDomainScriptAccessEnabled = Configurator.Settings.Network.CrossDomainScriptAccessEnabled;
+                binding.CrossDomainScriptAccessEnabled = StaticConfiguration.Settings.Network.CrossDomainScriptAccessEnabled;
                 // Create endpoint
                 ServiceEndpoint endPoint = new ServiceEndpoint(ContractDescription.GetContract(typeof(RESTController)),
                                                                binding,
@@ -102,8 +102,8 @@ namespace RscCore
             {
                 // Address
                 Uri uri = new Uri(String.Format("https://{0}:{1}/{2}",
-                    Configurator.Settings.Network.Host,
-                    Configurator.Settings.Network.Port,
+                    StaticConfiguration.Settings.Network.Host,
+                    StaticConfiguration.Settings.Network.Port,
                     typeof(RESTController).Name));
                 RscLog.Debug("URI<{0}>", uri.ToString());
                 // Bind SSL to configured port
@@ -114,7 +114,7 @@ namespace RscCore
                     // Use SSL
                     WebHttpBinding binding = new WebHttpBinding(WebHttpSecurityMode.Transport);
                     // Allow cross domain scripts
-                    binding.CrossDomainScriptAccessEnabled = Configurator.Settings.Network.CrossDomainScriptAccessEnabled;
+                    binding.CrossDomainScriptAccessEnabled = StaticConfiguration.Settings.Network.CrossDomainScriptAccessEnabled;
                     // Create endpoint
                     ServiceEndpoint endPoint = new ServiceEndpoint(ContractDescription.GetContract(typeof(RESTController)),
                                                                    binding,
@@ -158,8 +158,8 @@ namespace RscCore
         private static bool BindSSLToPort()
         {
             string command = string.Format(@"http add sslcert ipport=0.0.0.0:{0} certhash={1} appid={{{2}}}",
-                Configurator.Settings.Network.Port,
-                Configurator.Settings.Network.CertificateThumbprint,
+                StaticConfiguration.Settings.Network.Port,
+                StaticConfiguration.Settings.Network.CertificateThumbprint,
                 Assembly.GetExecutingAssembly().GetType().GUID.ToString(),
                 Environment.UserDomainName,
                 Environment.UserName);
@@ -183,7 +183,7 @@ namespace RscCore
         private static bool UnbindSSLFromPort()
         {
             string command = string.Format(@"http delete sslcert ipport=0.0.0.0:{0}",
-                Configurator.Settings.Network.Port);
+                StaticConfiguration.Settings.Network.Port);
 
             if (ExecuteNetsh(command) == 0)
             {

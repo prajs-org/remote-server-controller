@@ -58,14 +58,14 @@ namespace RscCore.Factories
                 service = new ServiceManager(serviceName);
 
                 // Load configuration of service from configuration file
-                if (false == Configurator.Settings.Services.AllowedServices.GetService(serviceName, out serviceConfiguration))
+                if (false == DynamicConfiguration.Settings.Services.AllowedServices.GetService(serviceName, out serviceConfiguration))
                 {
                     // Service is not configured and cannot be processed
                     RscLog.Alert("Processing of service<{0}> is not allowed because it is not configured!", serviceName);
                     forbidAll = true;
                 }
                 // Check API Key -- TODO: refactor this as separate function (reusable)
-                else if (Configurator.Settings.Security.CheckAPIKey)
+                else if (DynamicConfiguration.Settings.Security.CheckAPIKey)
                 {
                     if (false == APIKeyManager.Instance().IsValidAPIKey(apiKey))
                     {

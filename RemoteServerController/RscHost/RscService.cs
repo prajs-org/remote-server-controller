@@ -69,7 +69,7 @@ namespace RscHost
         {
             try
             {
-                if (Configurator.Settings.Network.UseSSL)
+                if (StaticConfiguration.Settings.Network.UseSSL)
                 {
                     host = RscCore.Endpoints.GetRESTHostSSL();
                 }
@@ -80,18 +80,25 @@ namespace RscHost
                 if (host != null)
                 {
                     host.Open();
-                    RscLog.Info("Service is running on " + Configurator.Settings.Network.Host + ":" + Configurator.Settings.Network.Port);
+                    RscLog.Info("Service is running on " + StaticConfiguration.Settings.Network.Host + ":" + StaticConfiguration.Settings.Network.Port);
                 }
                 else
                 {
                     RscLog.Error("Host not created.");
                 }
+                RscConfig.ConfigWatcher.Instance().Start();
+                RscConfig.ConfigWatcher.Instance().Changed += RscService_Changed;
             }
             catch (Exception ex)
             {
                 RscLog.Error(ex, "Host could not been started.");
                 this.OnStop();
             }
+        }
+
+        private void RscService_Changed(object sender, EventArgs e)
+        {
+            RscLog.Info("Dynamic configuration reloaded.");
         }
 
         protected override void OnStop()

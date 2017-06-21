@@ -58,9 +58,9 @@ for production usage. Use Windows Managed Service for production mode.
 Type {4} to stop listening and close program.",
                 Constants.AppDisplayName,
                 copyYear,
-                Configurator.Settings.Network.Host,
-                Configurator.Settings.Network.Port,
-                Configurator.Settings.GeneralSettings.QuitToken);
+                StaticConfiguration.Settings.Network.Host,
+                StaticConfiguration.Settings.Network.Port,
+                StaticConfiguration.Settings.GeneralSettings.QuitToken);
 
             Console.WriteLine(message);
         }

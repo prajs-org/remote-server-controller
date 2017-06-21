@@ -32,6 +32,14 @@ namespace RscHost
     static class Program
     {
         /// <summary>
+        /// Instance of the main service
+        /// </summary>
+        static RscService service;
+        /// <summary>
+        /// Flag whether we are in standalone mode (not windows service)
+        /// </summary>
+        static bool standAloneMode = false;
+        /// <summary>
         /// The main entry point for the application.
         /// Application can be executed as Windows Managed Service or with standalone host.
         /// Standalone host is not recommended for production usage.
@@ -48,7 +56,10 @@ namespace RscHost
             RscLog.RscLog.Info(String.Empty);
 
             // Create the service
-            var service = new RscService();
+            service = new RscService();
+
+            // Handle unhandled exceptions in service
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             // Start service or run it on console for debug
             if (args.Count() > 0)
@@ -59,6 +70,8 @@ namespace RscHost
                     // Run in standalone host
                     // ----------------------
 
+                    standAloneMode = true;
+
                     // Print welcome message
                     Helpers.WelcomeMessage();
                     // Start service
@@ -67,7 +80,7 @@ namespace RscHost
                     while (true)
                     {
                         string input = Console.ReadLine();
-                        if (input == Configurator.Settings.GeneralSettings.QuitToken)
+                        if (input == StaticConfiguration.Settings.GeneralSettings.QuitToken)
                             break;
                     }
                     // Stop service
@@ -110,6 +123,30 @@ namespace RscHost
 
                 ServiceBase.Run(service);
             }
+        }
+
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            if (e != null && e.ExceptionObject != null)
+            {
+                RscLog.RscLog.Error(e.ExceptionObject.ToString(), "Unhandled exception!");
+            }
+            if (standAloneMode)
+            {
+                RscLog.RscLog.Error(e.ExceptionObject.ToString());
+                RscLog.RscLog.Error("Unhandled exception! Exit!");
+                service.StopManually();
+            }
+            else
+            {
+                RscLog.RscLog.Error(e.ExceptionObject.ToString());
+                RscLog.RscLog.Error("Unhandled exception! Going to stop the service!");
+                ServiceController sc = new ServiceController(Constants.AppName);
+                sc.Stop();
+                sc.WaitForStatus(ServiceControllerStatus.Stopped);
+                RscLog.RscLog.Error("Service stopped. Exit.");
+            }
+            Environment.Exit(1);
         }
     }
 }

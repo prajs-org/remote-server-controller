@@ -84,7 +84,7 @@ namespace RscCore.Security
         private void LoadAPIKeys()
         {
             allowedAPIKeys.Clear();
-            foreach (var item in Configurator.Settings.Security.AllowedAPIKeys)
+            foreach (var item in DynamicConfiguration.Settings.Security.AllowedAPIKeys)
             {
                 AddAPIKey key = (AddAPIKey)item;
                 if (false == allowedAPIKeys.ContainsKey(key.Value))

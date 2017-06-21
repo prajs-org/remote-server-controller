@@ -257,7 +257,7 @@ namespace RscCore.Controllers.ServiceController
                     {
                         try
                         {
-                            TimeSpan timeout = TimeSpan.FromMilliseconds(Configurator.Settings.Services.StatusChangeTimeout);
+                            TimeSpan timeout = TimeSpan.FromMilliseconds(DynamicConfiguration.Settings.Services.StatusChangeTimeout);
                             switch (newStatus)
                             {
                                 case ServiceControllerStatus.Running:

@@ -67,7 +67,7 @@ namespace RscCore
         {
             List<ServiceStatus> serviceStatuses = new List<ServiceStatus>();
             RscLog.AuditIncoming(apiKey, serviceLogMessage, "SERVICE STATUS", RscConfig.Constants.AllItems);
-            foreach(var item in RscConfig.Configurator.Settings.Services.AllowedServices)
+            foreach(var item in RscConfig.DynamicConfiguration.Settings.Services.AllowedServices)
             {
                 if(item is RscConfig.AddService)
                 {

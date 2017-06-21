@@ -73,5 +73,13 @@ namespace RscConfig
         /// Token will be written to trace when ALL service statuses are requested (instead of service name).
         /// </summary>
         public static string AllItems = "ALL";
+        /// <summary>
+        /// Extension of file with configuration
+        /// </summary>
+        public static string ConfigFileExtension = ".config";
+        /// <summary>
+        /// How many times should I try to reload config from config file.
+        /// </summary>
+        public const int ConfigReloadRetry = 0;
     }
 }

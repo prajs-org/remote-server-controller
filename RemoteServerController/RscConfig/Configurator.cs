@@ -23,21 +23,27 @@ namespace RscConfig
     using System;
     using System.Configuration;
     using System.Text.RegularExpressions;
+    using System.Threading;
 
     // Project namespaces
     // -- none
 
     #region Base
-    public class Configurator : ConfigurationSection
+    /// <summary>
+    /// Static configuration is read only at program start and cannot be changed at runtime.
+    /// </summary>
+    public class StaticConfiguration : ConfigurationSection
     {
-        private static Configurator instance;
+        private const string mainSection = "StaticConfiguration";
 
-        static Configurator()
+        private static StaticConfiguration instance;
+
+        static StaticConfiguration()
         {
-            instance = ConfigurationManager.GetSection("Configurator") as Configurator;
+            instance = ConfigurationManager.GetSection(mainSection) as StaticConfiguration;
         }
 
-        public static Configurator Settings
+        public static StaticConfiguration Settings
         {
             get{ return instance; }
         }
@@ -55,19 +61,57 @@ namespace RscConfig
             set { this["Network"] = value; }
             get { return (Network)this["Network"]; }
         }
+    }
+    /// <summary>
+    /// Dynamic configuration is read at program start and is reloaded from config file whenever this file is modified.
+    /// </summary>
+    public class DynamicConfiguration : ConfigurationSection
+    {
+        private const string mainSection = "DynamicConfiguration";
+
+        private static DynamicConfiguration instance;
+
+        static DynamicConfiguration()
+        {
+            instance = ConfigurationManager.GetSection(mainSection) as DynamicConfiguration;
+        }
+
+        public static DynamicConfiguration Settings
+        {
+            get { return instance; }
+        }
+
+        public static void RefreshFromFile(int retryCount = Constants.ConfigReloadRetry)
+        {
+            try
+            {
+                ConfigurationManager.RefreshSection(mainSection);
+                instance = ConfigurationManager.GetSection(mainSection) as DynamicConfiguration;
+            }
+            catch (ConfigurationErrorsException ex)
+            {
+                // Sometimes happen that the editor has still lock on this file,
+                // so it cannot be read by us. So try it fewtimes later.
+                // If we still cannot reload the config, throw an exception, because
+                // it could cause safety troubles (for example when permissions for some services
+                // were removed but we cannot know it).
+                Thread.Sleep(100);
+                if (retryCount > 0)
+                {
+                    RefreshFromFile(--retryCount);
+                }
+                else
+                {
+                    throw ex;
+                }
+            }
+        }
 
         [ConfigurationProperty("Services", IsRequired = true)]
         public Services Services
         {
             set { this["Services"] = value; }
             get { return (Services)this["Services"]; }
-        }
-
-        [ConfigurationProperty("Files", IsRequired = true)]
-        public Files Files
-        {
-            set { this["Files"] = value; }
-            get { return (Files)this["Files"]; }
         }
 
         [ConfigurationProperty("Security", IsRequired = true)]
@@ -171,7 +215,7 @@ namespace RscConfig
 
         public bool GetService(string serviceName, out AddService outService)
         {
-            foreach (var item in Configurator.Settings.Services.AllowedServices)
+            foreach (var item in DynamicConfiguration.Settings.Services.AllowedServices)
             {
                 AddService service = (AddService)item;
                 if (serviceName == service.Name)
@@ -215,73 +259,6 @@ namespace RscConfig
             set { base["AllowStop"] = value; }
         }
     }
-
-    #endregion
-
-    #region Files
-
-    public class Files : ConfigurationElement
-    {
-        [ConfigurationProperty("AllowedFileCollection", IsRequired = true)]
-        public AllowedFileCollection AllowedFiles
-        {
-            get { return (AllowedFileCollection)this["AllowedFileCollection"]; }
-            set { this["AllowedFileCollection"] = value; }
-        }
-    }
-
-    public class AllowedFileCollection : ConfigurationElementCollection
-    {
-        protected override ConfigurationElement CreateNewElement()
-        {
-            return new AddFile();
-        }
-
-        protected override object GetElementKey(ConfigurationElement service)
-        {
-            return ((AddFile)service).FullPath;
-        }
-
-        public bool GetFile(string alias, out AddFile outFile)
-        {
-            foreach (var item in Configurator.Settings.Files.AllowedFiles)
-            {
-                AddFile file = (AddFile)item;
-                if (alias == file.Alias)
-                {
-                    outFile = file;
-                    return true;
-                }
-            }
-            outFile = null;
-            return false;
-        }
-    }
-
-    public class AddFile : ConfigurationElement
-    {
-        [ConfigurationProperty("FullPath", IsKey = true, IsRequired = true)]
-        public string FullPath
-        {
-            get { return (string)base["FullPath"]; }
-            set { base["FullPath"] = value; }
-        }
-
-        [ConfigurationProperty("AllowRead", IsKey = true, IsRequired = true)]
-        public bool AllowRead
-        {
-            get { return (bool)base["AllowRead"]; }
-            set { base["AllowRead"] = value; }
-        }
-
-        [ConfigurationProperty("Alias", IsKey = true, IsRequired = true)]
-        public string Alias
-        {
-            get { return (string)base["Alias"]; }
-            set { base["Alias"] = value; }
-        }
-    }
-
     #endregion
 
     #region Security
@@ -331,7 +308,7 @@ namespace RscConfig
 
         public bool GetAPIKey(string apiKey, out AddAPIKey outApiKey)
         {
-            foreach (var item in Configurator.Settings.Security.AllowedAPIKeys)
+            foreach (var item in DynamicConfiguration.Settings.Security.AllowedAPIKeys)
             {
                 AddAPIKey key = (AddAPIKey)item;
                 if (apiKey == key.Value)
@@ -369,7 +346,7 @@ namespace RscConfig
 
         public bool GetAPIKey(string ipAddress, out AddIPAddress outIpAddress)
         {
-            foreach (var item in Configurator.Settings.Security.AllowedIPAddresses)
+            foreach (var item in DynamicConfiguration.Settings.Security.AllowedIPAddresses)
             {
                 AddIPAddress ip = (AddIPAddress)item;
                 if (ipAddress == ip.Value)

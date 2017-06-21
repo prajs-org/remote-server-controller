@@ -2,7 +2,8 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Remote Server Controller"
-#define MyAppVersion "0.2017.157.14250"
+#define MyAppVersion "0.2017.172.14304"
+#define MyVersionInfoVersion "0.2017.172.14304"
 #define MyAppYear "2017"
 #define MyAppPublisher "Karel Prajs"
 #define MyAppURL "https://github.com/prajs-org/remote-server-controller"
@@ -15,6 +16,7 @@
 AppId={{F301F98B-72DF-4338-9B02-25DFD57763B3}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
+VersionInfoVersion={#MyVersionInfoVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 AppCopyright=Copyright (C) {#MyAppYear} {#MyAppPublisher}
