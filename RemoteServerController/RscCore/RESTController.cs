@@ -1,7 +1,7 @@
 ﻿/******************************************************************************
  * Remote Server Controller                                                   *
  * https://github.com/prajs-org/remote-server-controller                      *
- * Copyright (C) 2014-2017 Karel Prajs, karel@prajs.org                        *
+ * Copyright (C) 2014-2018 Karel Prajs, karel@prajs.org                        *
  *                                                                            *
  * This program is free software: you can redistribute it and/or modify       *
  * it under the terms of the GNU General Public License as published by       *
@@ -20,15 +20,13 @@
 namespace RscCore
 {
     // System namspaces
-    // -- none
+    using System.Collections.Generic;
 
     // Project namespaces
-    using RscInterface;
-    using RscCore.Controllers;
-    using RscLog;
-    using System;
+    using RscConfig;
     using RscCore.Factories;
-    using System.Collections.Generic;
+    using RscInterface;
+    using RscLog;
 
     /// <summary>
     /// Implementation of REST controller.
@@ -67,11 +65,10 @@ namespace RscCore
         {
             List<ServiceStatus> serviceStatuses = new List<ServiceStatus>();
             RscLog.AuditIncoming(apiKey, serviceLogMessage, "SERVICE STATUS", RscConfig.Constants.AllItems);
-            foreach(var item in RscConfig.DynamicConfiguration.Settings.Services.AllowedServices)
+            foreach(var item in RscConfig.DynamicConfiguration.Instance.Service.AllowedServiceCollection)
             {
-                if(item is RscConfig.AddService)
+                if (item is AllowedService allowedService)
                 {
-                    var allowedService = (RscConfig.AddService)item;
                     var servisStatus = ServiceManagerFactory.CreateServiceManager(allowedService.Name, apiKey).GetStatus();
                     serviceStatuses.Add(servisStatus);
                 }

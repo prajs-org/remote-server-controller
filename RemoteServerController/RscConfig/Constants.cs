@@ -1,7 +1,7 @@
 ﻿/******************************************************************************
  * Remote Server Controller                                                   *
  * https://github.com/prajs-org/remote-server-controller                      *
- * Copyright (C) 2014-2017 Karel Prajs, karel@prajs.org                        *
+ * Copyright (C) 2014-2018 Karel Prajs, karel@prajs.org                        *
  *                                                                            *
  * This program is free software: you can redistribute it and/or modify       *
  * it under the terms of the GNU General Public License as published by       *
@@ -81,5 +81,13 @@ namespace RscConfig
         /// How many times should I try to reload config from config file.
         /// </summary>
         public const int ConfigReloadRetry = 0;
+        /// <summary>
+        /// Name of system event log where are information about Windows Service actions.
+        /// </summary>
+        public const string ServiceEventLogName = "System";
+        /// <summary>
+        /// Source of system event log where are information about Windows Service actions.
+        /// </summary>
+        public const string ServiceEventLogSource = "Service Control Manager";
     }
 }

@@ -1,7 +1,7 @@
 ﻿/******************************************************************************
  * Remote Server Controller                                                   *
  * https://github.com/prajs-org/remote-server-controller                      *
- * Copyright (C) 2014-2017 Karel Prajs, karel@prajs.org                        *
+ * Copyright (C) 2014-2018 Karel Prajs, karel@prajs.org                        *
  *                                                                            *
  * This program is free software: you can redistribute it and/or modify       *
  * it under the terms of the GNU General Public License as published by       *
@@ -69,7 +69,7 @@ namespace RscHost
         {
             try
             {
-                if (StaticConfiguration.Settings.Network.UseSSL)
+                if (StaticConfiguration.Instance.Network.UseSSL)
                 {
                     host = RscCore.Endpoints.GetRESTHostSSL();
                 }
@@ -80,14 +80,12 @@ namespace RscHost
                 if (host != null)
                 {
                     host.Open();
-                    RscLog.Info("Service is running on " + StaticConfiguration.Settings.Network.Host + ":" + StaticConfiguration.Settings.Network.Port);
+                    RscLog.Info("Service is running on " + StaticConfiguration.Instance.Network.Host + ":" + StaticConfiguration.Instance.Network.Port);
                 }
                 else
                 {
                     RscLog.Error("Host not created.");
                 }
-                RscConfig.ConfigWatcher.Instance().Start();
-                RscConfig.ConfigWatcher.Instance().Changed += RscService_Changed;
             }
             catch (Exception ex)
             {

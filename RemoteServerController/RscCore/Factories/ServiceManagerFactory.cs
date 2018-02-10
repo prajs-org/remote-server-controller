@@ -1,7 +1,7 @@
 ﻿/******************************************************************************
  * Remote Server Controller                                                   *
  * https://github.com/prajs-org/remote-server-controller                      *
- * Copyright (C) 2014-2017 Karel Prajs, karel@prajs.org                        *
+ * Copyright (C) 2014-2018 Karel Prajs, karel@prajs.org                        *
  *                                                                            *
  * This program is free software: you can redistribute it and/or modify       *
  * it under the terms of the GNU General Public License as published by       *
@@ -43,7 +43,9 @@ namespace RscCore.Factories
             // This object will be returned if all succeeded
             ServiceManager service = null;
             // Configuration of service
-            AddService serviceConfiguration = null;
+            AllowedService serviceConfiguration = null;
+            // Security profile of that servise
+            SecurityProfile securityProfile = null;
             // If this variable is set to TRUE, no permissions will be set.
             bool forbidAll = false;
 
@@ -58,20 +60,41 @@ namespace RscCore.Factories
                 service = new ServiceManager(serviceName);
 
                 // Load configuration of service from configuration file
-                if (false == DynamicConfiguration.Settings.Services.AllowedServices.GetService(serviceName, out serviceConfiguration))
+                serviceConfiguration = DynamicConfiguration.Instance.Service.AllowedServiceCollection.GetItemByKey(serviceName);
+                if (serviceConfiguration == null)
                 {
                     // Service is not configured and cannot be processed
                     RscLog.Alert("Processing of service<{0}> is not allowed because it is not configured!", serviceName);
                     forbidAll = true;
                 }
-                // Check API Key -- TODO: refactor this as separate function (reusable)
-                else if (DynamicConfiguration.Settings.Security.CheckAPIKey)
+                else
                 {
-                    if (false == APIKeyManager.Instance().IsValidAPIKey(apiKey))
+                    // Load security profile for this servise
+                    securityProfile = DynamicConfiguration.Instance.Security.SecurityProfileCollection.GetItemByKey(serviceConfiguration.SecurityProfile);
+                    if (securityProfile == null)
                     {
-                        // Given API Key is not valid, request cannot be processed
-                        RscLog.Alert("Processing of service<{0}> is not allowed because of invalid APIKey<{1}>!", serviceName, apiKey);
+                        // Security profile is not configured, servise cannot be processed
+                        RscLog.Alert("Processing of service<{0}> is not allowed because no security profile is configured for it!", serviceName);
                         forbidAll = true;
+                    }
+                    else
+                    {
+                        // Check API key if required
+                        if (securityProfile.CheckAPIKey)
+                        {
+                            if (!APIKeyManager.Instance.IsValidAPIKey(securityProfile.Name, apiKey))
+                            {
+                                // API key not allowed for this servise
+                                RscLog.Alert("Processing of service<{0}> is not allowed because API key is not valid!", serviceName);
+                                forbidAll = true;
+                            }
+                        }
+
+                        // Check IP if required
+                        if (securityProfile.CheckIPAddress)
+                        {
+                            RscLog.Alert("CheckIPAddress not implemented yet", serviceName);
+                        }
                     }
                 }
             }

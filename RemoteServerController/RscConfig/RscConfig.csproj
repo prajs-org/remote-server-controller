@@ -61,8 +61,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Configurator.cs" />
-    <Compile Include="ConfigWatcher.cs" />
+    <Compile Include="ConfigurationSectionDesigner.csd.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ConfigurationSectionDesigner.csd</DependentUpon>
+    </Compile>
     <Compile Include="Constants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -89,7 +92,24 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="ConfigurationSectionDesigner.csd">
+      <Generator>CsdFileGenerator</Generator>
+      <LastGenOutput>ConfigurationSectionDesigner.csd.cs</LastGenOutput>
+    </None>
+    <None Include="ConfigurationSectionDesigner.csd.config">
+      <DependentUpon>ConfigurationSectionDesigner.csd</DependentUpon>
+    </None>
+    <None Include="ConfigurationSectionDesigner.csd.diagram">
+      <DependentUpon>ConfigurationSectionDesigner.csd</DependentUpon>
+    </None>
+    <None Include="ConfigurationSectionDesigner.csd.xsd">
+      <DependentUpon>ConfigurationSectionDesigner.csd</DependentUpon>
+      <SubType>Designer</SubType>
+    </None>
     <None Include="RscConfig.licenseheader" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

@@ -1,7 +1,7 @@
 ﻿/******************************************************************************
  * Remote Server Controller                                                   *
  * https://github.com/prajs-org/remote-server-controller                      *
- * Copyright (C) 2014-2017 Karel Prajs, karel@prajs.org                        *
+ * Copyright (C) 2014-2018 Karel Prajs, karel@prajs.org                        *
  *                                                                            *
  * This program is free software: you can redistribute it and/or modify       *
  * it under the terms of the GNU General Public License as published by       *
@@ -35,11 +35,10 @@ namespace RscCore.Security
         private static APIKeyManager instance = null;
         /// <summary>
         /// List of all allowed API keys.
-        /// Dictionary is used to have a direct access via hash.
-        /// So the Key contains API key, the Value is not used.
-        /// The Value can be used for detailed information in future.
+        /// Key is name of security profile.
+        /// Value uses Dictionary to have direct access to apiKeys, where key is apiKey and value is not used.
         /// </summary>
-        Dictionary<string, bool> allowedAPIKeys = new Dictionary<string, bool>();
+        Dictionary<string, Dictionary<string, int>> allowedAPIKeys = new Dictionary<string, Dictionary<string, int>>();
         /// <summary>
         /// Private constructor
         /// </summary>
@@ -60,37 +59,53 @@ namespace RscCore.Security
         /// Class is used for checking if given API key is valid and allowed for processing.
         /// Implemented as singleton.
         /// </summary>
-        public static APIKeyManager Instance()
+        public static APIKeyManager Instance
         {
-            if (instance == null)
-                instance = new APIKeyManager();
-            return instance;
+            get
+            {
+                if (instance == null)
+                    instance = new APIKeyManager();
+                return instance;
+            }            
         }
         /// <summary>
         /// Check if API Key is valid and allowed. 
         /// </summary>
+        /// <param name="securityProfile">Security profile</param>
         /// <param name="apiKey">API Key for check</param>
         /// <returns>True if API Key is valid</returns>
-        public bool IsValidAPIKey(string apiKey)
+        public bool IsValidAPIKey(string securityProfile, string apiKey)
         {
-            return apiKey == null ? false : allowedAPIKeys.ContainsKey(apiKey);
+            if(allowedAPIKeys.ContainsKey(securityProfile))
+            {
+                return allowedAPIKeys[securityProfile].ContainsKey(apiKey);
+            }
+            return false;
         }
         /// <summary>
         /// Clear the list of API kyes and load them again.
         /// Loads from config file at the moment.
-        /// Can be modified for any storage in future.
+        /// In case of any error (for example duplicates) just clear the list and load nothing.
         /// </summary>
         /// <returns></returns>
         private void LoadAPIKeys()
         {
-            allowedAPIKeys.Clear();
-            foreach (var item in DynamicConfiguration.Settings.Security.AllowedAPIKeys)
+            try
             {
-                AddAPIKey key = (AddAPIKey)item;
-                if (false == allowedAPIKeys.ContainsKey(key.Value))
+                allowedAPIKeys.Clear();
+                foreach (SecurityProfile securityProfile in DynamicConfiguration.Instance.Security.SecurityProfileCollection)
                 {
-                    allowedAPIKeys.Add(key.Value, true);
+                    allowedAPIKeys.Add(securityProfile.Name, new Dictionary<string, int>());
+                    foreach (AllowedAPIKey apiKey in securityProfile.AllowedAPIKeyCollection)
+                    {
+                        allowedAPIKeys[securityProfile.Name].Add(apiKey.Value, 0);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                RscLog.Error(ex, "Could not load API Keys.");
+                allowedAPIKeys.Clear();
             }
         }
     }

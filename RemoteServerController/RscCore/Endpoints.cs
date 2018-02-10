@@ -1,7 +1,7 @@
 ﻿/******************************************************************************
  * Remote Server Controller                                                   *
  * https://github.com/prajs-org/remote-server-controller                      *
- * Copyright (C) 2014-2017 Karel Prajs, karel@prajs.org                        *
+ * Copyright (C) 2014-2018 Karel Prajs, karel@prajs.org                        *
  *                                                                            *
  * This program is free software: you can redistribute it and/or modify       *
  * it under the terms of the GNU General Public License as published by       *
@@ -55,8 +55,8 @@ namespace RscCore
             {
                 // Address
                 Uri uri = new Uri(String.Format("http://{0}:{1}/{2}",
-                    StaticConfiguration.Settings.Network.Host,
-                    StaticConfiguration.Settings.Network.Port,
+                    StaticConfiguration.Instance.Network.Host,
+                    StaticConfiguration.Instance.Network.Port,
                     typeof(RESTController).Name));
                 RscLog.Debug("URI<{0}>", uri.ToString());
                 // Try to unbind SSL from port
@@ -66,7 +66,7 @@ namespace RscCore
                 // No security
                 WebHttpBinding binding = new WebHttpBinding(WebHttpSecurityMode.None);
                 // Allow cross domain scripts
-                binding.CrossDomainScriptAccessEnabled = StaticConfiguration.Settings.Network.CrossDomainScriptAccessEnabled;
+                binding.CrossDomainScriptAccessEnabled = StaticConfiguration.Instance.Network.CrossDomainScriptAccessEnabled;
                 // Create endpoint
                 ServiceEndpoint endPoint = new ServiceEndpoint(ContractDescription.GetContract(typeof(RESTController)),
                                                                binding,
@@ -102,8 +102,8 @@ namespace RscCore
             {
                 // Address
                 Uri uri = new Uri(String.Format("https://{0}:{1}/{2}",
-                    StaticConfiguration.Settings.Network.Host,
-                    StaticConfiguration.Settings.Network.Port,
+                    StaticConfiguration.Instance.Network.Host,
+                    StaticConfiguration.Instance.Network.Port,
                     typeof(RESTController).Name));
                 RscLog.Debug("URI<{0}>", uri.ToString());
                 // Bind SSL to configured port
@@ -114,7 +114,7 @@ namespace RscCore
                     // Use SSL
                     WebHttpBinding binding = new WebHttpBinding(WebHttpSecurityMode.Transport);
                     // Allow cross domain scripts
-                    binding.CrossDomainScriptAccessEnabled = StaticConfiguration.Settings.Network.CrossDomainScriptAccessEnabled;
+                    binding.CrossDomainScriptAccessEnabled = StaticConfiguration.Instance.Network.CrossDomainScriptAccessEnabled;
                     // Create endpoint
                     ServiceEndpoint endPoint = new ServiceEndpoint(ContractDescription.GetContract(typeof(RESTController)),
                                                                    binding,
@@ -158,8 +158,8 @@ namespace RscCore
         private static bool BindSSLToPort()
         {
             string command = string.Format(@"http add sslcert ipport=0.0.0.0:{0} certhash={1} appid={{{2}}}",
-                StaticConfiguration.Settings.Network.Port,
-                StaticConfiguration.Settings.Network.CertificateThumbprint,
+                StaticConfiguration.Instance.Network.Port,
+                StaticConfiguration.Instance.Network.CertificateThumbprint,
                 Assembly.GetExecutingAssembly().GetType().GUID.ToString(),
                 Environment.UserDomainName,
                 Environment.UserName);
@@ -183,7 +183,7 @@ namespace RscCore
         private static bool UnbindSSLFromPort()
         {
             string command = string.Format(@"http delete sslcert ipport=0.0.0.0:{0}",
-                StaticConfiguration.Settings.Network.Port);
+                StaticConfiguration.Instance.Network.Port);
 
             if (ExecuteNetsh(command) == 0)
             {

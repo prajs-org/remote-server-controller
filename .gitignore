@@ -27,3 +27,7 @@
 /RemoteServerController/RscLog/bin/Release
 /RemoteServerController/RscLog/obj/Release
 /RemoteServerController/Installer/Output
+/RemoteServerController/.vs/RemoteServerController/v15/Server/sqlite3
+/RemoteServerController/RscGUI
+/RemoteServerController/UpgradeLog.htm
+/RemoteServerController/UpgradeLog2.htm

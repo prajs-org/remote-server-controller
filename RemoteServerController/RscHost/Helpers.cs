@@ -1,7 +1,7 @@
 ﻿/******************************************************************************
  * Remote Server Controller                                                   *
  * https://github.com/prajs-org/remote-server-controller                      *
- * Copyright (C) 2014-2017 Karel Prajs, karel@prajs.org                        *
+ * Copyright (C) 2014-2018 Karel Prajs, karel@prajs.org                        *
  *                                                                            *
  * This program is free software: you can redistribute it and/or modify       *
  * it under the terms of the GNU General Public License as published by       *
@@ -58,9 +58,9 @@ for production usage. Use Windows Managed Service for production mode.
 Type {4} to stop listening and close program.",
                 Constants.AppDisplayName,
                 copyYear,
-                StaticConfiguration.Settings.Network.Host,
-                StaticConfiguration.Settings.Network.Port,
-                StaticConfiguration.Settings.GeneralSettings.QuitToken);
+                StaticConfiguration.Instance.Network.Host,
+                StaticConfiguration.Instance.Network.Port,
+                StaticConfiguration.Instance.General.QuitToken);
 
             Console.WriteLine(message);
         }

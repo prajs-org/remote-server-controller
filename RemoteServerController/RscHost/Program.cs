@@ -1,7 +1,7 @@
 ﻿/******************************************************************************
  * Remote Server Controller                                                   *
  * https://github.com/prajs-org/remote-server-controller                      *
- * Copyright (C) 2014-2017 Karel Prajs, karel@prajs.org                        *
+ * Copyright (C) 2014-2018 Karel Prajs, karel@prajs.org                        *
  *                                                                            *
  * This program is free software: you can redistribute it and/or modify       *
  * it under the terms of the GNU General Public License as published by       *
@@ -80,7 +80,7 @@ namespace RscHost
                     while (true)
                     {
                         string input = Console.ReadLine();
-                        if (input == StaticConfiguration.Settings.GeneralSettings.QuitToken)
+                        if (input == StaticConfiguration.Instance.General.QuitToken)
                             break;
                     }
                     // Stop service
